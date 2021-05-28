@@ -42,15 +42,10 @@ void    OLED_lnGd32::beginData()
  */
 void    OLED_lnGd32::update()
 {
-#define CHUNK 16      
     beginData();
-    uint8_t intermediary[CHUNK+1]={SSD1306_DATA_CONTINUE};
-    
-
-    for (int b=0; b<1024; b+=CHUNK)		// Send data
-    {
-        memcpy(intermediary+1,scrbuf+b,CHUNK);
-        _wire.write(SSD1306_ADDR,CHUNK+1,(uint8_t *)intermediary);
-    }    
+    uint8_t intermediary[1]={SSD1306_DATA_CONTINUE};
+    int lens[2]={1,1024};
+    uint8_t *datas[2]={intermediary,scrbuf};    
+    _wire.multiWrite(SSD1306_ADDR,2,lens,datas);
 }
 
