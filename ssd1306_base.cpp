@@ -19,9 +19,9 @@
   The license applies to all part of the library including the 
   examples and tools supplied with the library.
 */
-
+#include "Arduino.h"
 #include "ssd1306_base.h"
-#include "Wire.h"
+#include "math.h"
 
 OLEDCore::OLEDCore( uint8_t rst_pin)
 { 

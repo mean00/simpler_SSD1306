@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "ssd1306_cmd.h"
 #include "Arduino.h"
+#include "ssd1306_cmd.h"
 #include "gfxfont.h"
 
 
@@ -55,7 +55,7 @@ struct _current_font
 class OLEDCore
 {
 public:
-        typedef enum FontSize
+        enum FontSize
         {
             SmallFont,MediumFont,BigFont
         };

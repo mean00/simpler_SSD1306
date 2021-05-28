@@ -1,16 +1,16 @@
 #include "Arduino.h"
 #include "ssd1306_base.h"
-
-class OLED_stm32duino : public  OLEDCore
+#include "lnI2C.h"
+class OLED_lnGd32 : public  OLEDCore
 {
     public:
-                OLED_stm32duino(WireBase &wire, int reset);
+                OLED_lnGd32(lnTwoWire &wire, int reset);
         void    sendCommand(uint8_t cmd);
         void    update();
         //--
         void    beginData();
     protected:
-        WireBase &_wire;
+        lnTwoWire &_wire;
     
 };
 
