@@ -11,7 +11,7 @@
  * @param wire
  * @param reset
  */
- OLED_lnGd32::OLED_lnGd32(lnTwoWire &wire, int reset): OLEDCore(reset),_wire(wire)
+ OLED_lnGd32::OLED_lnGd32(lnI2C &wire, int reset): OLEDCore(reset),_wire(wire)
 {
     
 }
