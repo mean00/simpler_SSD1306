@@ -39,15 +39,6 @@
 
 #define RST_NOT_IN_USE	255
 
-struct _current_font
-{
-	uint8_t* font;
-	uint8_t x_size;
-	uint8_t y_size;
-	uint8_t offset;
-	uint8_t numchars;
-	uint8_t inverted;
-};
 #define fontbyte(x) cfont.font[x]  
 #define bitmapbyte(x) bitmap[x]
 #define bitmapdatatype unsigned char*
