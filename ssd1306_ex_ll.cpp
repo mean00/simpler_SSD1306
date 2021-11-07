@@ -1,6 +1,6 @@
 #include "ssd1306_base.h"
 
-#if 1
+#if 0
 #define PEDANTIC(x) if(!(x)) xAssert(0);
 #else
 #define PEDANTIC(...) {}
@@ -87,41 +87,42 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
     int xAdvance=glyph->xAdvance+1;
 
     
-    //
-     // top & bottom
+    // top & bottom
+    
     int maxHeight=currentFont->maxHeight;
-    int top=maxHeight+glyph->yOffset; 
-#if 0     
-    Logger("c=%c x=%d y=%d top=%d maxHeight=%d\n",c,x,y,top,maxHeight);
-    if(y>=top && (y+glyph->yOffset)<64)
-    {        
-        square( x,
-            y-top,
+    int baseLine=glyph->yOffset;
+    int topLine=glyph->yOffset+h;
+    // top
+    if(1 && topLine<maxHeight && y>=maxHeight)
+    {
+     square(x,
+            y-maxHeight  ,
+             
             xAdvance,
-            top-h,
+            maxHeight-topLine,
             invert);
     }
-#endif
-/*
-    int bottom=-glyph->yOffset-h;
-    if(bottom>=-2)
-        square(x,y-bottom,xAdvance,bottom+2,invert);      
-  */  
+    // baseLine is most of the time <0
+    
+    if(baseLine<0 && (y+baseLine)>=0)
+    {
+     square(x,
+            y+0*baseLine,
+            xAdvance,
+            -baseLine,
+            invert); 
+    }
 
     //
    
     // fill left and right
-    PEDANTIC(glyph->xOffset>=0)
-#if 1              
+    PEDANTIC(glyph->xOffset>=0)      
     if(glyph->xOffset>0)
     {
         square( x,y+glyph->yOffset,
                 glyph->xOffset,h,
                 invert);    
     }
-#endif    
-    
-#if 1        
     if(glyph->xAdvance+1 > (w+glyph->xOffset ))
     {
         square( x+w+glyph->xOffset,
@@ -129,7 +130,7 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
                 glyph->xAdvance+1-(w+glyph->xOffset ),
                 h,invert);
     }
-#endif
+
     x+=glyph->xOffset;
     y+=glyph->yOffset;
     int dex=0;
