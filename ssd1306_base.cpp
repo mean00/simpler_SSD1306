@@ -104,31 +104,7 @@ void OLEDCore::invert(bool mode)
         sendCommand(SSD1306_NORMAL_DISPLAY);
 }
 
-void OLEDCore::setPixel(uint16_t x, uint16_t y)
-{
-    int by, bi;
 
-    if ((x>=0) and (x<128) and (y>=0) and (y<64))
-    {
-        by=((y/8)*128)+x;
-        bi=y % 8;
-
-        scrbuf[by]=scrbuf[by] | (1<<bi);
-    }
-}
-
-void OLEDCore::clrPixel(uint16_t x, uint16_t y)
-{
-    int by, bi;
-
-    if ((x>=0) and (x<128) and (y>=0) and (y<64))
-    {
-        by=((y/8)*128)+x;
-        bi=y % 8;
-
-        scrbuf[by]=scrbuf[by] & ~(1<<bi);
-    }
-}
 
 void OLEDCore::invPixel(uint16_t x, uint16_t y)
 {

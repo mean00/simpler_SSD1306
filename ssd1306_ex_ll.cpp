@@ -1,5 +1,40 @@
 #include "ssd1306_base.h"
 
+#if 1
+#define PEDANTIC(x) if(!(x)) xAssert(0);
+#else
+#define PEDANTIC(...) {}
+#endif
+void OLEDCore::setPixel(uint16_t x, uint16_t y)
+{
+    int by, bi;
+
+    if ((x>=0) and (x<128) and (y>=0) and (y<64))
+    {
+        by=((y/8)*128)+x;
+        bi=y % 8;
+
+        scrbuf[by]=scrbuf[by] | (1<<bi);
+        PEDANTIC(by>=0)
+        PEDANTIC(by<1024)
+    }
+}
+
+void OLEDCore::clrPixel(uint16_t x, uint16_t y)
+{
+    int by, bi;
+
+    if ((x>=0) and (x<128) and (y>=0) and (y<64))
+    {
+        by=((y/8)*128)+x;
+        bi=y % 8;
+
+        scrbuf[by]=scrbuf[by] & ~(1<<bi);
+        PEDANTIC(by>=0)
+        PEDANTIC(by<1024)
+        
+    }
+}
 /**
  * 
  * @param x
@@ -75,15 +110,28 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
 
     //
    
-#if 0    
     // fill left and right
-    square(x,y,glyph->xOffset,h,invert);    
-    x+=glyph->xOffset;
-    if(glyph->xAdvance>w)
-        square(x+w,y,glyph->xAdvance-w,h,invert);
+    PEDANTIC(glyph->xOffset>=0)
+#if 1              
+    if(glyph->xOffset>0)
+    {
+        square( x,y+glyph->yOffset,
+                glyph->xOffset,h,
+                invert);    
+    }
 #endif    
     
-     y+=glyph->yOffset;
+#if 1        
+    if(glyph->xAdvance+1 > (w+glyph->xOffset ))
+    {
+        square( x+w+glyph->xOffset,
+                y+glyph->yOffset,
+                glyph->xAdvance+1-(w+glyph->xOffset ),
+                h,invert);
+    }
+#endif
+    x+=glyph->xOffset;
+    y+=glyph->yOffset;
     int dex=0;
 
     int bits = 0, bit = 0;
@@ -121,8 +169,8 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
                     scrbuf[by]|=bimask;
                 else
                     scrbuf[by]&=notbimask;    
-                if(by>=1024) xAssert(0);
-                if(by<0) xAssert(0);
+                PEDANTIC(by<1024)
+                PEDANTIC(by>=0)
             }
             mask>>=1;
             dex++;
