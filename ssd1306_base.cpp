@@ -122,37 +122,6 @@ void OLEDCore::invPixel(uint16_t x, uint16_t y)
     }
 }
 
-void OLEDCore::drawHLine(int x, int y, int l)
-{
-    int by, bi;
-
-    if ((x>=0) and (x<128) and (y>=0) and (y<64))
-    {
-        for (int cx=0; cx<l; cx++)
-        {
-            by=((y/8)*128)+x;
-            bi=y % 8;
-
-            scrbuf[by+cx] |= (1<<bi);
-        }
-    }
-}
-
-void OLEDCore::clrHLine(int x, int y, int l)
-{
-    int by, bi;
-
-    if ((x>=0) and (x<128) and (y>=0) and (y<64))
-    {
-        for (int cx=0; cx<l; cx++)
-        {
-            by=((y/8)*128)+x;
-            bi=y % 8;
-
-            scrbuf[by+cx] &= ~(1<<bi);
-        }
-    }
-}
 
 void OLEDCore::drawVLine(int x, int y, int l)
 {

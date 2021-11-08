@@ -5,6 +5,37 @@
 #else
 #define PEDANTIC(...) {}
 #endif
+
+/**
+ */
+void OLEDCore::drawHLine(int x, int y, int l)
+{  
+     if (y>63 || y<0 || x<0 || (x+l)>127) return;
+    
+    uint8_t *p=scrbuf+ ((y/8)*128)+x; // segment + offset
+    int bit=1<<(y%8);
+    for(int xx=0;xx<l;xx++)
+    {
+        *p|=bit;
+        p++;
+    }    
+}
+/**
+ */
+void OLEDCore::clrHLine(int x, int y, int l)
+{
+    if (y>63 || y<0 || x<0 || (x+l)>127) return;
+    
+    uint8_t *p=scrbuf+ ((y/8)*128)+x; // segment + offset
+    int bit=~(1<<(y%8));
+    for(int xx=0;xx<l;xx++)
+    {
+        *p&=bit;
+        p++;
+    }    
+}
+
+
 void OLEDCore::setPixel(uint16_t x, uint16_t y)
 {
     int by, bi;
@@ -42,28 +73,43 @@ void OLEDCore::clrPixel(uint16_t x, uint16_t y)
  * @param c
  * @param color
  * @param bg
+ * 
+ * This is only used by drawChar!
  */
 
-void OLEDCore::square(int x,int y,int w, int h, bool color)
-{
-    
+void OLEDCore::squareYInverted(int x,int y,int w, int h, bool color)
+{   
+    int y3;
     if(color)
-    {
-        for(int xx=x;xx<x+w;xx++)
+    {        
         for(int yy=y;yy<y+h;yy++)
-            
+        {
+            y3=yy;
+            if(y3>=64) return;
+            y3=64-y3;
+            uint8_t *p=scrbuf+ ((y3/8)*128)+x; // segment + offset
+            int bit=1<<(y3%8);
+            for(int xx=0;xx<w;xx++)
             {
-        	setPixel(xx,64-yy);
+                *p|=bit;
+                p++;
             }
+        }
     }else
     {
-        for(int xx=x;xx<x+w;xx++)
         for(int yy=y;yy<y+h;yy++)
-            
+        {
+            y3=yy;
+            if(y3>=64) return;
+            y3=64-y3;
+            uint8_t *p=scrbuf+ ((y3/8)*128)+x;
+            int bit=~(1<<(y3%8));
+            for(int xx=0;xx<w;xx++)
             {
-        	clrPixel(xx,64-yy);
+                *p&=bit;
+                p++;
             }
-        
+        }
     }
 }
 /**
@@ -95,7 +141,7 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
     // top
     if(1 && topLine<maxHeight && y>=maxHeight)
     {
-     square(x,
+     squareYInverted(x,
             y-maxHeight  ,
              
             xAdvance,
@@ -106,7 +152,7 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
     
     if(baseLine<0 && (y+baseLine)>=0)
     {
-     square(x,
+     squareYInverted(x,
             y+0*baseLine,
             xAdvance,
             -baseLine,
@@ -119,13 +165,13 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
     PEDANTIC(glyph->xOffset>=0)      
     if(glyph->xOffset>0)
     {
-        square( x,y+glyph->yOffset,
+        squareYInverted( x,y+glyph->yOffset,
                 glyph->xOffset,h,
                 invert);    
     }
     if(glyph->xAdvance+1 > (w+glyph->xOffset ))
     {
-        square( x+w+glyph->xOffset,
+        squareYInverted( x+w+glyph->xOffset,
                 y+glyph->yOffset,
                 glyph->xAdvance+1-(w+glyph->xOffset ),
                 h,invert);
@@ -146,7 +192,7 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
         int bimask=1<<bi;
         int notbimask=~bimask;
         int start=((ty/8)*128);
-        if(ty<0 || ty>128)
+        if(ty<0 || ty>=64)
         {
             dex+=w/8; // this is incomplete ! should not happen though
             Logger("out of window\n");

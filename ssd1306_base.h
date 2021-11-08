@@ -104,6 +104,9 @@ public: // extra functions
 		void	clrHLine(int x, int y, int l);
 		void	drawVLine(int x, int y, int l);
 		void	clrVLine(int x, int y, int l);
+                void    squareYInverted(int x,int y,int w, int h, bool color);
+                
+                
                 uint8_t scrbuf[1024];
                 int     cursor_x,cursor_y;
 
