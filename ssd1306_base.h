@@ -65,7 +65,11 @@ public:
 public: // extra functions
                 void    drawRLEBitmap(int widthInPixel, int height, int wx, int wy, int fgcolor, int bgcolor, const uint8_t *data)    ;
                 void    myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert) ;                
-                void    square(int x,int y,int w, int h, bool color);
+                void    square(int x,int y,int w, int h, bool color)
+                            {
+#warning this is incorrect
+                                squareYInverted(x,y,w,h,color); 
+                            }
                 void    setFontSize(FontSize size);
                 void    setFontFamily(const GFXfont *small, const GFXfont *medium, const GFXfont *big);
                 void    print(int x,int y,const char *z);
@@ -104,11 +108,11 @@ public: // extra functions
 		void	clrHLine(int x, int y, int l);
 		void	drawVLine(int x, int y, int l);
 		void	clrVLine(int x, int y, int l);
-                void    squareYInverted(int x,int y,int w, int h, bool color);
+        void    squareYInverted(int x,int y,int w, int h, bool color);
                 
                 
-                uint8_t scrbuf[1024];
-                int     cursor_x,cursor_y;
+        uint8_t scrbuf[1024];
+        int     cursor_x,cursor_y;
 
                 
 };
