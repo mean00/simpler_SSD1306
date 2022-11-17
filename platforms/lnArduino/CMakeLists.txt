@@ -5,6 +5,11 @@ SET(SRCS
                 ../../ssd1306_base.cpp
                 ../../ssd1306_ex.cpp
                 ../../ssd1306_ex_ll.cpp
+                ../../ssd1306_initSeq.cpp
+                ../../ssd1306_initSeq2.cpp
+                ../../ssd1306_initSeq3.cpp
+                ../../ssd1306_initSeq4.cpp
+                ../../ssd1306_initSeq5.cpp
                 ssd1306_i2c_lnGd32vf103.cpp
         )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

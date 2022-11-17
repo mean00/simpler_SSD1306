@@ -25,7 +25,7 @@ void loop()
   lnI2C *i2c=new lnI2C(0,SPEED);
   i2c->begin(0x3c);
   OLED_lnGd32 *ssd1306=new OLED_lnGd32( *i2c, -1);
-  ssd1306->begin();
+  ssd1306->begin(NULL);
   ssd1306->setFontFamily(&FreeSans7pt7b,&FreeSans7pt7b,&FreeSans7pt7b);
   ssd1306->setFontSize(OLEDCore::SmallFont);
   while(1)

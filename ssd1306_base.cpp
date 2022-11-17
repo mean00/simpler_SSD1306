@@ -44,8 +44,13 @@ OLEDCore::OLEDCore( uint8_t rst_pin)
 	inverted=false;
 }
 
-void OLEDCore::begin()
+void OLEDCore::begin(OLED_InitStruct *t)
 {
+	const OLED_InitStruct *init=t;
+	if(!init)
+	{
+		init=&oled_init1;
+	}
 	if (_rst_pin != RST_NOT_IN_USE)
 	{
 		pinMode(_rst_pin, OUTPUT);
@@ -56,9 +61,9 @@ void OLEDCore::begin()
 		digitalWrite(_rst_pin, HIGH);
 	}
 	
-    int n=sizeof(initSequence);
+    int n=init->size;
     for(int i=0;i<n;i++)
-        sendCommand(initSequence[i]);
+        sendCommand(init->data[i]);
 
     clrScr();
     update();

@@ -43,6 +43,15 @@
 #define bitmapbyte(x) bitmap[x]
 #define bitmapdatatype unsigned char*
 
+/**
+\brief this is the sequence to initialize the screen
+*/
+struct OLED_InitStruct
+{
+  int size;
+  const uint8_t *data;
+};
+
 class OLEDCore
 {
 public:
@@ -79,7 +88,7 @@ public: // extra functions
                 int     write(uint8_t c) ;
 	public:
                         OLEDCore( uint8_t rst_pin);
-		void	begin();
+		void	begin(OLED_InitStruct *init=NULL);
 		void	setBrightness(uint8_t value);
 		void	clrScr();
 		void	fillScr();

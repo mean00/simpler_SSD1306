@@ -1,5 +1,7 @@
 
-const uint8_t initSequence[]=
+#include "ssd1306_base.h"
+
+static const uint8_t initSequence[]=
 {
      SSD1306_DISPLAY_OFF                    // ae
     ,SSD1306_SET_DISPLAY_CLOCK_DIV_RATIO    // d5
@@ -26,4 +28,10 @@ const uint8_t initSequence[]=
     ,SSD1306_DISPLAY_ALL_ON_RESUME          // a4
     ,SSD1306_NORMAL_DISPLAY                 // a6
     ,SSD1306_DISPLAY_ON                     // af
+};
+
+const OLED_InitStruct oled_init4=
+{
+    sizeof(initSequence),
+    initSequence
 };
