@@ -32,7 +32,7 @@ void loop()
   {
       Logger("Loop..\n");
       ssd1306->clrScr();
-      ssd1306->square(100,20,30,30,true);
+      ssd1306->square(100,20,28,30,true);
       ssd1306->print(2,40,"Demo");
       ssd1306->update();
       xDelay(500);
