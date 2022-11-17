@@ -195,7 +195,7 @@ void OLEDCore::myDrawChar(int16_t x, int16_t y, unsigned char c,  bool invert)
         if(ty<0 || ty>=64)
         {
             dex+=w/8; // this is incomplete ! should not happen though
-            Logger("out of window\n");
+            //Logger("out of window\n");
             return;
         }
         for(int ww=0;ww<w;ww++)

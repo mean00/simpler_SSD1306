@@ -24,7 +24,7 @@
 
 #include "Arduino.h"
 #include "ssd1306_cmd.h"
-#include "gfxfont.h"
+#include "pfxfont.h"
 
 
 #define SSD1306_ADDR		0x3C

@@ -24,18 +24,24 @@
 #include "math.h"
 
 // Pick the one matching your screen
-//#include "ssd1306_initSeq.cpp"
-#include "ssd1306_initSeq2.cpp"
+#include "ssd1306_initSeq.cpp"
+//#include "ssd1306_initSeq2.cpp"
 //#include "ssd1306_initSeq3.cpp"
 //#include "ssd1306_initSeq4.cpp"
 //#include "ssd1306_initSeq5.cpp"
 
+int myAbs(int x)
+{
+        if(x>=0) return x;
+        return -x;
+}
+
 OLEDCore::OLEDCore( uint8_t rst_pin)
 { 
 	_rst_pin = rst_pin;
-        cursor_x=0;
-        cursor_y=0;
-        inverted=false;
+	cursor_x=0;
+	cursor_y=0;
+	inverted=false;
 }
 
 void OLEDCore::begin()
@@ -173,7 +179,7 @@ void OLEDCore::drawLine(int x1, int y1, int x2, int y2)
 		}
 		drawVLine(x1, y1, y2-y1);
 	}
-	else if (abs(x2-x1)>abs(y2-y1))
+	else if (myAbs(x2-x1)>myAbs(y2-y1))
 	{
 		delta=(double(y2-y1)/double(x2-x1));
 		ty=double(y1);
@@ -263,7 +269,7 @@ void OLEDCore::clrLine(int x1, int y1, int x2, int y2)
 		}
 		clrVLine(x1, y1, y2-y1);
 	}
-	else if (abs(x2-x1)>abs(y2-y1))
+	else if (myAbs(x2-x1)>myAbs(y2-y1))
 	{
 		delta=(double(y2-y1)/double(x2-x1));
 		ty=double(y1);

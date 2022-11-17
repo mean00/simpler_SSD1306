@@ -3,7 +3,8 @@
  * @param wire
  * @param reset
  */
-
+#include "Arduino.h"
+#include "Wire.h"
 #include "ssd1306_i2c_arduino.h"
 #include "ssd1306_cmd.h"
 /**
@@ -21,10 +22,10 @@ OLED_arduino::OLED_arduino(TwoWire &wire, int address, int reset) : OLEDCore(res
  */
 void    OLED_arduino::sendCommand(uint8_t cmd)
 {    
-    _wire.beginTransmission(SSD1306_ADDR);
-    _wire.write(SSD1306_COMMAND);
-    _wire.write(cmd);
-    _wire.endTransmission();    
+    Wire.beginTransmission(_address);
+    Wire.write(SSD1306_COMMAND);
+    Wire.write(cmd);
+    Wire.endTransmission();    
 }
 
 /**
@@ -36,24 +37,24 @@ const uint8_t beginHeader[]={
 };
 void    OLED_arduino::beginData()
 {    
-    _wire.beginTransmission(SSD1306_ADDR);
-    _wire.write((uint8_t *)beginHeader,sizeof(beginHeader));
-    _wire.endTransmission();   
+    Wire.beginTransmission(_address);
+    Wire.write((uint8_t *)beginHeader,sizeof(beginHeader));
+    Wire.endTransmission();   
 }
 /**
  * 
  */
 void    OLED_arduino::update()
 {
+    
     beginData();
- #define CHUNK 16      
+ #define CHUNK 64     
     for (int b=0; b<1024; b+=CHUNK)		// Send data
     {
-     _wire.beginTransmission(SSD1306_ADDR);
-     _wire.write(SSD1306_DATA_CONTINUE);
-     _wire.write(scrbuf+b,CHUNK);
-     _wire.endTransmission();
+        Wire.beginTransmission(_address); 
+        Wire.write(SSD1306_DATA_CONTINUE);
+        Wire.write(scrbuf+b,CHUNK);        
+        Wire.endTransmission();        
     }
-    
 }
 
