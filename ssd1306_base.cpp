@@ -38,6 +38,7 @@ int myAbs(int x)
 
 OLEDCore::OLEDCore( uint8_t rst_pin)
 { 
+	scrbuf=new uint8_t[1024];
 	_rst_pin = rst_pin;
 	cursor_x=0;
 	cursor_y=0;
@@ -72,12 +73,15 @@ void OLEDCore::begin(OLED_InitStruct *t)
 
 void OLEDCore::clrScr()
 {
-	memset(scrbuf, 0, 1024);
+	fillScr(0);
 }
 
-void OLEDCore::fillScr()
+void OLEDCore::fillScr(bool color)
 {
-	memset(scrbuf, 255, 1024);
+	if(color)
+		memset(scrbuf, 255, 1024);
+	else
+		memset(scrbuf, 0, 1024);	 
 }
 
 void OLEDCore::setBrightness(uint8_t value)

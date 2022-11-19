@@ -91,7 +91,7 @@ public: // extra functions
 		void	begin(OLED_InitStruct *init=NULL);
 		void	setBrightness(uint8_t value);
 		void	clrScr();
-		void	fillScr();
+		void	fillScr(bool color);
 		void	invert(bool mode);
 		void	setPixel(uint16_t x, uint16_t y);
 		void	clrPixel(uint16_t x, uint16_t y);
@@ -120,7 +120,7 @@ public: // extra functions
         void    squareYInverted(int x,int y,int w, int h, bool color);
                 
                 
-        uint8_t scrbuf[1024];
+        uint8_t *scrbuf;
         int     cursor_x,cursor_y;
 
                 
