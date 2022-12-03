@@ -44,8 +44,8 @@ void    OLED_lnGd32::update()
 {
     beginData();
     uint8_t intermediary[1]={SSD1306_DATA_CONTINUE};
-    int lens[2]={1,1024};
-    uint8_t *datas[2]={intermediary,scrbuf};    
+    const uint32_t lens[2]={1,1024};
+    const uint8_t *datas[2]={intermediary,scrbuf};    
     _wire.multiWrite(SSD1306_ADDR,2,lens,datas);
 }
 

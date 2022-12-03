@@ -1,7 +1,9 @@
 
 #define EXTVCC 0
 
-const uint8_t initSequence[]=
+#include "ssd1306_base.h"
+
+static const uint8_t initSequence[]=
 {
      SSD1306_DISPLAY_OFF                    // ae
     ,SSD1306_SET_DISPLAY_CLOCK_DIV_RATIO    // d5
@@ -33,4 +35,10 @@ const uint8_t initSequence[]=
     , 0x21
     ,0,127 // width -1
     ,0x22,0,7 // 32 lines = 3, 64 lines = 7
+};
+
+const OLED_InitStruct oled_init5=
+{
+    sizeof(initSequence),
+    initSequence
 };
