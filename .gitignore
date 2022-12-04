@@ -1,1 +1,6 @@
 *.sw*
+target
+rs/simplerSSD1306/src/*.h
+rs/simplerSSD1306/src/*.cpp
+rs/simplerSSD1306/src/ili*.*
+

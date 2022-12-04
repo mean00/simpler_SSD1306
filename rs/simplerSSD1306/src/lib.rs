@@ -8,7 +8,7 @@ extern crate alloc;
 pub mod access;
 
 mod util;
-mod glyph;
+pub mod glyph;
 mod ssd1306_cmd;
 
 pub mod ssd1306;
