@@ -1,0 +1,10 @@
+[package]
+name = "ssd1306"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+sim = []
+
+[dependencies]
+cty = "0.2.2"
