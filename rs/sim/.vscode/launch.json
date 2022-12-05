@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'ili_exec'",
+            "name": "Debug executable 'ssd1306_exec'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=ili_exec",
-                    "--package=ili_sim"
+                    "--bin=ssd1306_exec",
+                    "--package=ssd1306_sim"
                 ],
                 "filter": {
-                    "name": "ili_exec",
+                    "name": "ssd1306_exec",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'ili_exec'",
+            "name": "Debug unit tests in executable 'ssd1306_exec'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=ili_exec",
-                    "--package=ili_sim"
+                    "--bin=ssd1306_exec",
+                    "--package=ssd1306_sim"
                 ],
                 "filter": {
-                    "name": "ili_exec",
+                    "name": "ssd1306_exec",
                     "kind": "bin"
                 }
             },

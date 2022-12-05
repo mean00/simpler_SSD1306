@@ -41,6 +41,14 @@ impl <'a>SSD1306<'a>
         let ix = self.current_font_index as usize;
         return &self.font_infos[ix];
     }
+    pub fn update(&mut self)
+    {
+        unsafe {
+            let fs=(self.width * self.height)/8;
+            let s = & core::slice::from_raw_parts(self.screen_buffer,fs)[0..fs];
+            self.access.screen_update(s);
+        }
+    }
     //-------------------------------------------------------------------------------
     pub fn new (w: usize, h:usize, access: &'a mut dyn SSD1306Access, 
                 smallfont :  &'static PFXfont, mediumfont:  &'static PFXfont, bigfont :  &'static PFXfont                 

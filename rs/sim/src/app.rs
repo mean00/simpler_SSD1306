@@ -22,6 +22,7 @@ struct quadAccess
     width : usize,
     height : usize,
 }
+//----------------------
 impl quadAccess 
 {
    
@@ -29,26 +30,6 @@ impl quadAccess
     {
         
     }
-}
-//-------
-fn full_to_unit( c : u16 , shift: usize, range : usize) -> f32
-{
-    let mut f= c;
-    f=f>>shift;
-    if range==6
-    {
-        f&=0x3f;
-    }else {
-        f&=0x1f;
-    }
-    f<<= 8-range;
-    let mut m=f as f32;
-    m=m/255.;
-    if m>1.0
-    {
-        m=1.0;
-    }
-    m
 }
 //-------
 impl SSD1306Access for quadAccess 
@@ -59,8 +40,26 @@ impl SSD1306Access for quadAccess
     }
     fn  screen_update(&mut self, data : &[u8])
     {
-
+        for y in 0..64
+        {
+            for x in 0..(128/8)
+            {                
+                let u=data[(y*128/8)]+x;
+                for r in 0..8
+                {
+                    let pix = u & (1<<(r as u32));
+                    let mut color = Color::new(0.,0.,0.,1.0);
+                    if pix!=0
+                    {
+                        color = Color::new(1.,1.,1.,1.0);
+                    }
+                    draw_rectangle((2*x) as f32, (2*y) as f32, 2.,2.,color);
+                }
+            }
+        }
     }
+
+    
     fn  reset(&mut self )
     {
         self.flush();
@@ -133,7 +132,7 @@ async fn main() {
 
     ssd.begin(&init_seq);
 
-    ssd.fill_screen(false);
+    ssd.fill_screen(true);
     //next_frame().await;
     ssd.draw_line(10,10,120,60,true); // \
     //next_frame().await;
@@ -146,6 +145,8 @@ async fn main() {
     ssd.draw_line(120,60,10,60,true);// _ Bottom
     //next_frame().await;
     ssd.draw_line(10,10,120,10,true);// - top
+
+    ssd.update();
 
     next_frame().await;
     }
