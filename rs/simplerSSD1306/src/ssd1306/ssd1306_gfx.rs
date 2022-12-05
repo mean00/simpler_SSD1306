@@ -17,22 +17,22 @@ impl <'a>SSD1306<'a>
 	//-----------------------------
 	pub fn set_pixel(&mut self, x: usize, y: usize, color : bool)	
 	{
-		
+		let  screen_buffer =&mut self.raw;
 
 		if   (x<self.width) &&  (y<self.height)
 		{
 			let by=((y/8)*128)+x;
 			let bi=y & 7;
 
-			unsafe {
+			
 				if color
 				{
-					*(self.screen_buffer.offset(by as isize)) |= 1<<bi;
+					screen_buffer[by] |= 1<<bi;
 				}else
 				{
-					*(self.screen_buffer.offset(by as isize)) &=!(1<<bi);
+					screen_buffer[by] &=!(1<<bi);
 				}
-			}
+			
 		}
 	}
 
@@ -47,10 +47,10 @@ impl <'a>SSD1306<'a>
     {
         let fs=(self.width*self.height)/8;
         let filler = 255*(color as u8);
-
+		
 		unsafe{
 			for i in 
-			&mut core::slice::from_raw_parts_mut(self.screen_buffer,fs)[0..fs] 
+			&mut self.raw
 			{
 				*i = filler 
 			}

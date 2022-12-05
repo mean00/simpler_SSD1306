@@ -38,13 +38,13 @@ impl SSD1306Access for quadAccess
     {
 
     }
-    fn  screen_update(&mut self, data : &[u8])
+    fn  screen_update(&mut self, width : usize, height : usize, data : &[u8])
     {
-        for y in 0..64
+        for y in 0..height
         {
-            for x in 0..(128/8)
+            for x in 0..(width/8)
             {                
-                let u=data[(y*128/8)]+x;
+                let u=data[(y*width/8)+x];
                 for r in 0..8
                 {
                     let pix = u & (1<<(r as u32));

@@ -3,7 +3,7 @@ extern crate alloc;
 
 use crate::util::unsafe_array_alloc as unsafe_array_alloc;
 use crate::util::unsafe_box_allocate as unsafe_box_allocate;
-
+use alloc::vec::Vec;
 //
 use crate::glyph::{PFXfont,FontInfo};
 //
@@ -25,13 +25,13 @@ pub struct SSD1306 <'a>
 {   
     width           : usize,
     height          : usize,
-    screen_buffer    : *mut u8,
     access          : &'a mut dyn SSD1306Access,
     current_font_index : FontFamily,
     font_infos      : [FontInfo;3],
     cursor_x        : usize,
     cursor_y        : usize,
     invert          : bool,
+    raw             : Vec::<u8>,
 }
 //-----------------
 impl <'a>SSD1306<'a>
@@ -43,26 +43,34 @@ impl <'a>SSD1306<'a>
     }
     pub fn update(&mut self)
     {
-        unsafe {
-            let fs=(self.width * self.height)/8;
-            let s = & core::slice::from_raw_parts(self.screen_buffer,fs)[0..fs];
-            self.access.screen_update(s);
-        }
+        
+        self.access.screen_update(self.width, self.height, &self.raw);
     }
     //-------------------------------------------------------------------------------
     pub fn new (w: usize, h:usize, access: &'a mut dyn SSD1306Access, 
                 smallfont :  &'static PFXfont, mediumfont:  &'static PFXfont, bigfont :  &'static PFXfont                 
                 ) 
-                    -> &'a mut SSD1306 <'a>
+                    -> SSD1306 <'a>
     {
-        // there is probably a better way to do this
-        // we dont want to use the stack (even temporarily) as it will overflow
-        unsafe {
-        let  allocated :  *mut SSD1306   = unsafe_box_allocate();
-        (*allocated)._init(w,h,access,smallfont,mediumfont,bigfont);        
-        // We normally never free this, so a mem leak is a not a big deal            
-        return &mut (*allocated);
-        }
+        let fs = (w*h)>>3;
+        let mut instance = SSD1306 
+        {   
+            width           : w,
+            height          : h,
+            access          : access,
+            current_font_index : FontFamily::SmallFont,
+            font_infos      : [ 
+                                            FontInfo{max_height: 0, max_width: 0,font: smallfont},
+                                            FontInfo{max_height: 0, max_width: 0,font: mediumfont}, 
+                                            FontInfo{max_height: 0, max_width: 0,font: bigfont}],
+            cursor_x        : 0,
+            cursor_y        : 0,
+            invert          : false,
+            raw             : Vec::<u8>::with_capacity(fs),
+        };
+        unsafe { instance.raw.set_len(fs)};
+        instance.check_font( );
+        instance       
     }    
     //-------------------------------------------------------------------------------
     pub fn begin( &mut self,  init_sequence : &[u8])
@@ -74,23 +82,6 @@ impl <'a>SSD1306<'a>
                 self.access.send_command(init_sequence[i]);
             }
             self.clear_screen();
-    }
-    //-------------------------------------------------------------------------------
-    fn _init(&'a mut self,w: usize, h:usize, access: &'a mut dyn SSD1306Access, 
-            smallfont :  &'static PFXfont, mediumfont:  &'static PFXfont, bigfont :  &'static PFXfont ) 
-    {
-        self.width              = w;
-        self.height             = h;          
-        self.cursor_x           = 0;   
-        self.cursor_y           = 0;
-        self.invert             = false;
-        self.screen_buffer      = unsafe_array_alloc((w*h)/8);
-        self.access             = access;
-        self.font_infos[0].font = smallfont;        
-        self.font_infos[1].font = mediumfont;
-        self.font_infos[2].font = bigfont;                
-        self.check_font( );
-        self.current_font_index = FontFamily::SmallFont;
-    }   
+    }    
 }
 // EOF

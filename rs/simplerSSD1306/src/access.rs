@@ -2,7 +2,7 @@
 
 pub trait SSD1306Access {
        fn  send_command(&mut self, command : u8);
-       fn  screen_update(&mut self, data : &[u8]);
+       fn  screen_update(&mut self, width : usize, height : usize, data : &[u8]);
        fn  reset(&mut self, );
 }
 
