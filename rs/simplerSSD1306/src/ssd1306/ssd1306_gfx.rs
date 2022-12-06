@@ -44,16 +44,11 @@ impl <'a>SSD1306<'a>
     }
 	//-----------------------------	
     pub fn fill_screen(&mut self,color : bool)
-    {
-        let fs=(self.width*self.height)/8;
+    {        
         let filler = 255*(color as u8);
-		
-		unsafe{
-			for i in 
-			&mut self.raw
-			{
-				*i = filler 
-			}
+		for i in 	&mut self.raw
+		{
+			*i = filler 
 		}
     }
 	//-----------------------------	
