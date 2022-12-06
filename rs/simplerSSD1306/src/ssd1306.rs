@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 extern crate alloc;
 
-use crate::util::unsafe_array_alloc as unsafe_array_alloc;
-use crate::util::unsafe_box_allocate as unsafe_box_allocate;
 use alloc::vec::Vec;
 //
 use crate::glyph::{PFXfont,FontInfo};

@@ -1,6 +1,5 @@
 
 use super::SSD1306;
-
 use crate::ssd1306_cmd::*;
 
 fn myAbs(a : usize, b: usize) -> usize
@@ -12,6 +11,16 @@ fn myAbs(a : usize, b: usize) -> usize
 	return b-a;
 }
 //--------------
+fn myMin(a : usize, b: usize) -> usize
+{
+	if a>b 
+	{
+		return b;
+	}
+	return a;
+}
+//--------------
+
 impl <'a>SSD1306<'a>
 {
 	//-----------------------------
@@ -100,10 +109,25 @@ impl <'a>SSD1306<'a>
 			self.set_pixel(x, i, color);
 		}
 	}
+	//----------------------------
+	pub fn draw_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
+	{
+		let w =  myAbs(x1, x2);
+		let h =  myAbs(y1, y2);
+		let x = myMin(x1,x2);
+		let y = myMin(y1,y2);
+
+		self.draw_hline(x, y, w, color);
+		self.draw_hline(x, y+h, w, color);
+
+		self.draw_vline(x, y, h, color);
+		self.draw_vline(x+w, y, h, color);
+	}
+
 	//-----------------------------	
 	pub fn draw_line(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)	
 	{
-		let mut tmp: usize =0;
+		let mut tmp: usize ;
 		let mut x1 = x1;
 		let mut x2 = x2;
 		let mut y1 = y1;
@@ -168,8 +192,7 @@ impl <'a>SSD1306<'a>
 		}
 		else
 		{
-			let  mut delta : isize;
-			delta = ((myAbs(x2,x1)*4096)/myAbs(y2,y1)) as isize;
+			let  mut delta : isize=((myAbs(x2,x1)*4096)/myAbs(y2,y1)) as isize;
 			if y1>y2
 			{
 				tmp=x1;
@@ -178,6 +201,10 @@ impl <'a>SSD1306<'a>
 				tmp=y1;
 				y1=y2;
 				y2=tmp;
+			}
+			if x2 < x1
+			{
+				delta=-delta;
 			}
 			let mut x1 : isize = x1 as isize;
 			for i in y1..=y2
@@ -194,145 +221,48 @@ impl <'a>SSD1306<'a>
 		}
 	
 	}
+	//----------------------------------------------------------------------------
+	pub fn draw_circle(&mut self, x: usize, y:usize, radius: usize,  color : bool)	
+	{
+		let mut f : isize = 1 - (radius as isize);
+		let mut  ddF_x : isize = 1;
+		let mut  ddF_y = -2 * (radius as isize);
+		let mut  x1 = 0;
+		let mut y1 = radius;
+		
+		
+		self.set_pixel(x, y + radius, color);
+		self.set_pixel(x, y - radius, color);
+		self.set_pixel(x + radius, y, color);
+		self.set_pixel(x - radius, y, color);
+	
+		while x1 < y1
+		{
+			if f >= 0
+			{
+				y1-=1;
+				ddF_y += 2;
+				f+= ddF_y;
+			}
+			x1+=1;
+			ddF_x += 2;
+			f += ddF_x;    
+			self.set_pixel(x + x1, y + y1, color);
+			self.set_pixel(x - x1, y + y1, color);
+			self.set_pixel(x + x1, y - y1, color);
+			self.set_pixel(x - x1, y - y1, color);
+			self.set_pixel(x + y1, y + x1, color);
+			self.set_pixel(x - y1, y + x1, color);
+			self.set_pixel(x + y1, y - x1, color);
+			self.set_pixel(x - y1, y - x1, color);
+		}
+	}
 
 }
+
+
 
 /*
-
-
-
-
-void OLEDCore::invPixel(uint16_t x, uint16_t y)
-{
-    int by, bi;
-
-    if ((x>=0) and (x<128) and (y>=0) and (y<64))
-    {
-        by=((y/8)*128)+x;
-        bi=y % 8;
-
-        if ((scrbuf[by] & (1<<bi))==0)
-            scrbuf[by]=scrbuf[by] | (1<<bi);
-        else
-            scrbuf[by]=scrbuf[by] & ~(1<<bi);
-    }
-}
-
-
-void OLEDCore::drawLine(int x1, int y1, int x2, int y2)
-{
-	int tmp;
-	double delta, tx, ty;
-	double m, b, dx, dy;
-	
-	if (((x2-x1)<0))
-	{
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-    if (((y2-y1)<0))
-	{
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-
-	if (y1==y2)
-	{
-		if (x1>x2)
-		{
-			tmp=x1;
-			x1=x2;
-			x2=tmp;
-		}
-		drawHLine(x1, y1, x2-x1);
-	}
-	else if (x1==x2)
-	{
-		if (y1>y2)
-		{
-			tmp=y1;
-			y1=y2;
-			y2=tmp;
-		}
-		drawVLine(x1, y1, y2-y1);
-	}
-	else if (myAbs(x2-x1)>myAbs(y2-y1))
-	{
-		delta=(double(y2-y1)/double(x2-x1));
-		ty=double(y1);
-		if (x1>x2)
-		{
-			for (int i=x1; i>=x2; i--)
-			{
-				setPixel(i, int(ty+0.5));
-        		ty=ty-delta;
-			}
-		}
-		else
-		{
-			for (int i=x1; i<=x2; i++)
-			{
-				setPixel(i, int(ty+0.5));
-        		ty=ty+delta;
-			}
-		}
-	}
-	else
-	{
-		delta=(float(x2-x1)/float(y2-y1));
-		tx=float(x1);
-        if (y1>y2)
-        {
-			for (int i=y2+1; i>y1; i--)
-			{
-		 		setPixel(int(tx+0.5), i);
-        		tx=tx+delta;
-			}
-        }
-        else
-        {
-			for (int i=y1; i<y2+1; i++)
-			{
-		 		setPixel(int(tx+0.5), i);
-        		tx=tx+delta;
-			}
-        }
-	}
-
-}
-
-void OLEDCore::drawRect(int x1, int y1, int x2, int y2)
-{
-	int tmp;
-
-	if (x1>x2)
-	{
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-	}
-	if (y1>y2)
-	{
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-
-	drawHLine(x1, y1, x2-x1);
-	drawHLine(x1, y2, x2-x1);
-	drawVLine(x1, y1, y2-y1);
-	drawVLine(x2, y1, y2-y1+1);
-}
-
-
 void OLEDCore::drawRoundRect(int x1, int y1, int x2, int y2)
 {
 	int tmp;
@@ -362,41 +292,6 @@ void OLEDCore::drawRoundRect(int x1, int y1, int x2, int y2)
 	}
 }
 
-void OLEDCore::drawCircle(int x, int y, int radius)
-{
-	int f = 1 - radius;
-	int ddF_x = 1;
-	int ddF_y = -2 * radius;
-	int x1 = 0;
-	int y1 = radius;
-	char ch, cl;
-	
-	setPixel(x, y + radius);
-	setPixel(x, y - radius);
-	setPixel(x + radius, y);
-	setPixel(x - radius, y);
- 
-	while(x1 < y1)
-	{
-		if(f >= 0) 
-		{
-			y1--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x1++;
-		ddF_x += 2;
-		f += ddF_x;    
-		setPixel(x + x1, y + y1);
-		setPixel(x - x1, y + y1);
-		setPixel(x + x1, y - y1);
-		setPixel(x - x1, y - y1);
-		setPixel(x + y1, y + x1);
-		setPixel(x - y1, y + x1);
-		setPixel(x + y1, y - x1);
-		setPixel(x - y1, y - x1);
-	}
-}
 
 void OLEDCore::drawBitmap(int x, int y, uint8_t* bitmap, int sx, int sy)
 {

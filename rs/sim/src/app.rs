@@ -121,6 +121,12 @@ async fn main() {
     //next_frame().await;
     ssd.draw_line(10,10,120,10,true);// - top
 
+    //
+    ssd.draw_rectangle(20,20,64,40,true);
+
+    //
+    ssd.draw_circle(60,40,10,true);
+
     ssd.update();
 
     next_frame().await;
