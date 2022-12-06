@@ -78,7 +78,7 @@ impl <'a>SSD1306<'a>
 		{
 			end=self.width-1;
 		}
-		for i in x..end
+		for i in x..=end
 		{
 			self.set_pixel(i, y, color);
 		}
@@ -95,7 +95,7 @@ impl <'a>SSD1306<'a>
 		{
 			end=self.height-1;
 		}
-		for i in y..end
+		for i in y..=end
 		{
 			self.set_pixel(x, i, color);
 		}
@@ -109,26 +109,6 @@ impl <'a>SSD1306<'a>
 		let mut y1 = y1;
 		let mut y2 = y2;
 
-		
-		if x2<x1
-		{
-			tmp=x1;
-			x1=x2;
-			x2=tmp;
-			tmp=y1;
-			y1=y2;
-			y2=tmp;
-		}
-		if y2 < y1
-		{
-			tmp=x1;
-			x1=x2;
-			x2=tmp;
-			tmp=y1;
-			y1=y2;
-			y2=tmp;
-		}
-	
 		if y1==y2
 		{
 			if x1>x2
@@ -152,52 +132,65 @@ impl <'a>SSD1306<'a>
 			self.draw_vline(x1, y1, y2-y1,color);
 			return;
 		}
-		let mut acc=0;
+		
+		
+		let mut acc : isize=0;
 		if myAbs(x2,x1)>myAbs(y2,y1)
 		{
-			let   delta : usize;
-			delta = (myAbs(y2,y1)*4096)/myAbs(x2,x1);			
+			let  mut delta : isize;
+			delta = ((myAbs(y2,y1)*4096)/myAbs(x2,x1)) as isize;			
 			if x1>x2
 			{
-				//
+				tmp=x1;
+				x1=x2;
+				x2=tmp;
+				tmp=y1;
+				y1=y2;
+				y2=tmp;
 			}
-			else
+			if y2 < y1
 			{
-				for i in x1..(x2+1)
+				delta=-delta;
+			}
+			let mut y1 : isize = y1 as isize;
+			for i in x1..=x2
+			{
+				self.set_pixel(i, y1 as usize,color);
+				acc+=delta;
+				let inc=acc/4096;
+				if inc!=0
 				{
-					self.set_pixel(i, y1,color);
-					acc+=delta;
-					let inc=acc/4096;
-					if inc!=0
-					{
-						y1+=inc;
-						acc-=inc*4096;
-					}
+					y1+=inc;
+					acc-=inc*4096;
 				}
 			}
+			
 		}
 		else
 		{
-			let   delta : usize;
-			delta = (myAbs(x2,x1)*4096)/myAbs(y2,y1);
+			let  mut delta : isize;
+			delta = ((myAbs(x2,x1)*4096)/myAbs(y2,y1)) as isize;
 			if y1>y2
 			{
-				//---
+				tmp=x1;
+				x1=x2;
+				x2=tmp;
+				tmp=y1;
+				y1=y2;
+				y2=tmp;
 			}
-			else
+			let mut x1 : isize = x1 as isize;
+			for i in y1..=y2
 			{
-				for i in y1..(y2+1)				
+				self.set_pixel(x1 as usize, i,color);
+				acc+=delta;
+				let inc=acc/4096;
+				if inc!=0
 				{
-					self.set_pixel(x1, i,color);
-					acc+=delta;
-					let inc=acc/4096;
-					if inc!=0
-					{
-						x1+=inc;
-						acc-=inc*4096;
-					}
+					x1+=inc;
+					acc-=inc*4096;
 				}
-			}
+			}			
 		}
 	
 	}
