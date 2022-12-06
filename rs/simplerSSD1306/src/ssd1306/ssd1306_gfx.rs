@@ -19,21 +19,21 @@ impl <'a>SSD1306<'a>
 	{
 		let  screen_buffer =&mut self.raw;
 
-		if   (x<self.width) &&  (y<self.height)
+		if   (x>=self.width) ||  (y>=self.height)
 		{
-			let by=((y/8)*128)+x;
-			let bi=y & 7;
-
-			
-				if color
-				{
-					screen_buffer[by] |= 1<<bi;
-				}else
-				{
-					screen_buffer[by] &=!(1<<bi);
-				}
-			
+			return;
 		}
+		
+		let by=((y/8)*self.width)+x;
+		let bi=y & 7;
+
+		if color
+		{
+			screen_buffer[by] |= 1<<bi;
+		}else
+		{
+			screen_buffer[by] &=!(1<<bi);
+		}			
 	}
 
 
