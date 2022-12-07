@@ -123,6 +123,19 @@ impl <'a>SSD1306<'a>
 		self.draw_vline(x, y, h, color);
 		self.draw_vline(x+w, y, h, color);
 	}
+	//----------------------------
+	pub fn draw_filled_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
+	{
+		let w =  myAbs(x1, x2);
+		let h =  myAbs(y1, y2);
+		let x = myMin(x1,x2);
+		let y = myMin(y1,y2);
+
+		for yy in y..=(y+h)
+		{
+			self.draw_hline(x, yy, w, color);	
+		}
+	}
 
 	//-----------------------------	
 	pub fn draw_line(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)	

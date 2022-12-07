@@ -11,7 +11,7 @@ use ssd1306::access::SSD1306Access as SSD1306Access;
 
 mod testFont;
 
-use crate::testFont::OpenSans_Regular9pt7b;
+use crate::testFont::OpenSans_Bold9pt7b;
 
 
 const SCREEN_WIDTH: usize = 128;
@@ -96,9 +96,9 @@ async fn main() {
     let mut access = quadAccess::new();
 
     let mut ssd  = SSD1306::new (SCREEN_WIDTH,SCREEN_HEIGHT, &mut access,
-            &OpenSans_Regular9pt7b, //NotoSans_Bold20pt7b,
-            &OpenSans_Regular9pt7b,
-            &OpenSans_Regular9pt7b    
+            &OpenSans_Bold9pt7b,
+            &OpenSans_Bold9pt7b,
+            &OpenSans_Bold9pt7b    
             );
     
     let init_seq : [u8;0] = [0;0];

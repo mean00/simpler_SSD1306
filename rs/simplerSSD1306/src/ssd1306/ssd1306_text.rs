@@ -95,7 +95,7 @@ impl <'a>SSD1306<'a>
                 return;
             }
         }    
-        self.draw_rectangle( x, y, x+w-1, y+h-1,color);
+        self.draw_filled_rectangle( x, y, x+w-1, y+h-1,color);
         return ;
     }
 
@@ -211,12 +211,16 @@ impl <'a>SSD1306<'a>
         {
             right=0;
         } 
+        if left > 0
+        {
+            self.my_square(x,((y as isize)-bottom) as usize,left,(bottom+2) as usize,!color);  
+        }
         let glyph_data : &[u8] = &(self.current_font().font.bitmap[ (glyph.offset as usize)..]);
-        self.innerLoop(x,y, w,h,left,advv,color,glyph_data );                        
+        self.innerLoop(x,y, w, h, color,glyph_data );                        
         return glyph.x_advance as usize;        
     }   
     //----------
-    fn innerLoop(&mut self, x : usize, y : usize, w: usize, h : usize, left: usize, line_size: usize, color : bool, p: &'a [u8])
+    fn innerLoop(&mut self, x : usize, y : usize, w: usize, h : usize, color : bool, p: &'a [u8])
     {
         let mut bits : usize =0;
         let mut mask : usize =0;
