@@ -9,10 +9,10 @@ use ssd1306::ssd1306::SSD1306;
 use ssd1306::access::SSD1306Access as SSD1306Access;
 
 
-mod testfont;
-mod testfont2C;
-use crate::testfont::NotoSans_Bold20pt7b;
-use crate::testfont2C::DejaVuSans20pt7b;
+mod testFont;
+
+use crate::testFont::OpenSans_Regular9pt7b;
+
 
 const SCREEN_WIDTH: usize = 128;
 const SCREEN_HEIGHT: usize = 64;
@@ -96,9 +96,9 @@ async fn main() {
     let mut access = quadAccess::new();
 
     let mut ssd  = SSD1306::new (SCREEN_WIDTH,SCREEN_HEIGHT, &mut access,
-            &DejaVuSans20pt7b, //NotoSans_Bold20pt7b,
-            &NotoSans_Bold20pt7b,
-            &NotoSans_Bold20pt7b    
+            &OpenSans_Regular9pt7b, //NotoSans_Bold20pt7b,
+            &OpenSans_Regular9pt7b,
+            &OpenSans_Regular9pt7b    
             );
     
     let init_seq : [u8;0] = [0;0];
@@ -126,6 +126,9 @@ async fn main() {
 
     //
     ssd.draw_circle(60,40,10,true);
+
+    ssd.print(24,24,"Hey!",true);
+    ssd.print(94,32,"Hey!",false);
 
     ssd.update();
 
