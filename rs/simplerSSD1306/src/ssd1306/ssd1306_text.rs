@@ -154,23 +154,53 @@ impl <'a>SSD1306<'a>
     }
   
     //---------------------------------------
+    /*
+                                      *****  /\
+                                      *****  |
+                (X,Y) <--xOffset----> *****  Height
+                          ^           *****  |
+                        yOffset(<0)   *****  \/
+                          \/          <  width >
+    
+    
+    */
     fn my_draw_char(&mut self,  x: usize, y : usize, c: usize, color: bool) -> usize
-    {
+    {        
         let full_c = c;
         let mut c =c;
-        let mut y : isize = y as isize;
-        c -= self.current_font().font.first as usize;
+        let y : isize = y as isize;
+        let first = self.current_font().font.first as usize;
+        if c<first
+        {
+            return 0;
+        }
+        c -= first;
 
         let glyph : &PFXglyph = &( self.current_font().font.glyphs[c]);
                                
         let  w: usize    = glyph.width as usize;
-        let  mut h: usize    = glyph.height as usize;    
+        let  h: usize    = glyph.height as usize;    
         let  xAdvance: usize = glyph.x_advance as usize +1;
-        let  max_height: isize = self.current_font().max_height as isize;
-        let  top : usize = (self.current_font().max_height as isize +glyph.y_offset as isize) as usize;
 
+        let max_height: isize = self.current_font().max_height as isize;
+
+        // baseLine is most of the time <0
         let base_line : isize  = glyph.y_offset as isize;
-        let top_line : isize = (glyph.y_offset as isize) + h as isize;
+        let top_line  : isize  = base_line + h as isize;
+        //let bottom_line : isize = -(glyph.y_offset as isize)-(h as isize);
+
+        //
+        if full_c==(' ' as usize)
+        {
+            if y>=top_line
+            {
+                self.my_square(x,
+                            (y-top_line) as usize,
+                            xAdvance, //Fix!
+                            self.current_font().max_height+2,!color);
+            }
+            return xAdvance;
+        }       
 
         // top
         if  top_line<max_height && y>=max_height
@@ -181,217 +211,67 @@ impl <'a>SSD1306<'a>
                     (max_height-top_line) as usize,
                     !color);
         }
-        // baseLine is most of the time <0
         
-        if(base_line<0 && (y+base_line)>=0)
+        // bottom
+        let bottom: isize =-(glyph.y_offset as isize)-(h as isize);
+        if bottom >= -2 && (y+base_line)>=0
         {
             self.my_square(x,
-                    (y+0*base_line) as usize,
+                    (y-bottom) as usize,
                     xAdvance as usize,
-                    -base_line as usize,
+                    (bottom+2) as usize,
                     !color); 
         }
-
-        if(glyph.x_offset>0)
+        // left
+        if glyph.x_offset>0
         {
-            self.my_square( x,(y+glyph.y_offset as isize) as usize,
-                    glyph.x_offset as usize,
-                    h,
-                    !color);    
+            self.my_square( x,
+                            (y+glyph.y_offset as isize) as usize,
+                            glyph.x_offset as usize,
+                                h,
+                        !color);    
         }
-        if glyph.x_advance as usize +1 > (w as usize +glyph.x_offset as usize ) as usize
+        // right
+        let right_offset : usize =  w + glyph.x_offset as usize;
+        let right : isize = glyph.x_advance as isize +1 - right_offset as isize;
+        if right > 0
         {            
-            self.my_square( (x as isize +w as isize +glyph.x_offset as isize) as usize,
+            
+            self.my_square( x+right_offset,
                     (y as isize +glyph.y_offset as isize) as usize,
-                    (glyph.x_advance as isize +1-(w as isize +glyph.x_offset as isize )) as usize,
+                    right as usize,
                     h,
                     !color);
         }
 
-        let mut x=x+glyph.x_offset as usize;
-        let mut y : usize =(y+glyph.y_offset as isize) as usize;
+        // main loop
+        let x=x+glyph.x_offset as usize;
+        let y : usize =(y+glyph.y_offset as isize) as usize;
         let mut ix : usize = 0;
         let mut mask : usize = 0;
         let mut bits : usize = 0;
         let p : &[u8] = &(self.current_font().font.bitmap[ (glyph.offset as usize)..]);
 
-        for _line in 0..h 
+        for line in y..(y+h)
         {
-            for _xcol in 0..w
+            for xcol in x..(x+w)
             {
-              unsafe {
                 if mask==0 // reload ?
                 {
-                    bits= p[ix] as usize;ix+=1;
+                    bits= p[ix] as usize;
+                    ix+=1;
                     mask = 0x80;
                 }      
-                                
-                if (bits & mask)!=0
+                self.set_pixel(  xcol,line, match (bits & mask)!=0
                 {
-                    self.set_pixel(x+_xcol,(y+_line) as usize,color);
-                }else
-                {
-                    self.set_pixel(x+_xcol,(y+_line) as usize,!color);
-                }
-              }
+                    true => color,
+                    false => !color,
+                });
                 mask>>=1;
             }  
-        }   
-
-        /*
-        int dex=0;
-
-        int bits = 0, bit = 0;
-        int n=h*w;
-        int mask=0;
-        uint8_t *data=bitmap+bo;
-        for(int hh=0;hh<h;hh++)
-        {
-            int ty=64-(y+hh);   
-            int bi=ty%8;
-            int bimask=1<<bi;
-            int notbimask=~bimask;
-            int start=((ty/8)*128);
-            if(ty<0 || ty>=64)
-            {
-                dex+=w/8; // this is incomplete ! should not happen though
-                //Logger("out of window\n");
-                return;
-            }
-            for(int ww=0;ww<w;ww++)
-            {
-                if (!mask) 
-                {
-                bits = *data++;       
-                mask=0x80;
-                }
-                bool set=!!   (bits & mask) ;
-                set^=invert;
-                
-                int tx=(x+ww);
-                if(tx>=0 && tx<128 )
-                {
-                    int by=start+tx;     
-                    if(set)
-                        scrbuf[by]|=bimask;
-                    else
-                        scrbuf[by]&=notbimask;    
-                    PEDANTIC(by<1024)
-                    PEDANTIC(by>=0)
-                }
-                mask>>=1;
-                dex++;
-            }
-        }
-        */
+        }        
         return glyph.x_advance as usize;
-    }
-/*    
-    fn my_draw_char(&mut self,  x: usize, y : usize, c: usize, color: bool) -> usize
-    { 
-
-        let full_c = c;
-        let mut c =c;
-        let mut y : usize = y;
-        c -= self.current_font().font.first as usize;
-
-        let glyph : &PFXglyph = &( self.current_font().font.glyphs[c]);
-                               
-        let  w: usize    = glyph.width as usize;
-        let  mut h: usize    = glyph.height as usize;    
-        let  advv: usize = glyph.x_advance as usize +1;
-        let  top : usize = (self.current_font().max_height as isize +glyph.y_offset as isize) as usize;
-        // Special case
-        if full_c==(' ' as usize)
-        {
-            if y>=top
-            {
-                self.my_square(x,
-                            (y-top) as usize,
-                            advv, //Fix!
-                            self.current_font().max_height+2,!color);
-            }
-            return advv;
-        }       
-      
-        
-        // top & bottom
-        if y > self.current_font().max_height
-        {
-            self.my_square(x,
-                    y-self.current_font().max_height,
-                    advv,
-                    top,!color);
-        }
-        let bottom: isize =-(glyph.y_offset as isize)-(h as isize);
-        if bottom>=-2
-        {
-            self.my_square(x,((y as isize)-bottom) as usize,advv,(bottom+2) as usize,!color);      
-        }
-            
-        // offset is <0 most of the time
-        let mut tmpy : isize = y as isize;
-        tmpy+= glyph.y_offset as isize;   
-        if tmpy<0
-        {
-            return glyph.x_advance as usize;
-        }
-        y = tmpy as usize;
-
-        let left: usize =glyph.x_offset as usize;
-        let mut right: isize =(advv as isize)-(w as isize + (left as isize));
-        let box_height : usize = (bottom+2) as usize;
-        let bottom_line : usize = ((y as isize)-bottom) as usize;
-        if right<0
-        {
-            right=0;
-        } 
-        if left > 0
-        {
-            self.my_square(x,bottom_line,left,box_height,!color);  
-        
-            if right > 0 && x+w+left < self.width
-            {
-                self.my_square(x+w+left,bottom_line,right as usize,box_height,!color);  
-            }
-        }    
-        let glyph_data : &[u8] = &(self.current_font().font.bitmap[ (glyph.offset as usize)..]);
-        self.innerLoop(x,y, w, h, color,glyph_data );                        
-        return glyph.x_advance as usize;        
-    }   
-    //----------
-    fn innerLoop(&mut self, x : usize, y : usize, w: usize, h : usize, color : bool, p: &'a [u8])
-    {
-        let mut bits : usize =0;
-        let mut mask : usize =0;
-        let mut col  : *mut u16;
-        let mut ix : usize =0;         
-        for _line in 0..h // for( int line=h-1;line>=0;line--)
-        {
-            // mid
-            //for( int xcol=w-1;xcol>=0;xcol--)
-            for _xcol in 0..w
-            {
-              unsafe {
-                if mask==0 // reload ?
-                {
-                    bits= p[ix] as usize;ix+=1;
-                    mask = 0x80;
-                }      
-                                
-                if (bits & mask)!=0
-                {
-                    self.set_pixel(x+_xcol,y+_line,color);
-                }else
-                {
-                    self.set_pixel(x+_xcol,y+_line,!color);
-                }
-              }
-                mask>>=1;
-            }  
-        }   
-    }     
-    */           
+    }       
   
 }
 // EOF

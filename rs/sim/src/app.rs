@@ -127,8 +127,9 @@ async fn main() {
     //
     ssd.draw_circle(60,40,10,true);
 
-    ssd.print(24,24,"Hey!",true);
-    ssd.print(94,32,"Hey!",false);
+    //ssd.print(24,24,"!!!#",true);
+    ssd.print(44,24,"Hey!",true);
+    ssd.print(74,48,"Hey!",false);
 
     ssd.update();
 
