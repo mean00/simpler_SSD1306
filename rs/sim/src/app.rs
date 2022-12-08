@@ -79,7 +79,7 @@ impl SSD1306Access for quadAccess
 }
 
 //---
-#[macroquad::main("BasicShapes")]
+#[macroquad::main("SSD1306")]
 async fn main() {
     let mut loops = 0;
     let bitmap_width = 96;
@@ -123,9 +123,6 @@ async fn main() {
 
     //
     ssd.draw_rectangle(20,20,64,40,true);
-    //
-   
-
     //
     ssd.draw_circle(60,40,10,true);
 
