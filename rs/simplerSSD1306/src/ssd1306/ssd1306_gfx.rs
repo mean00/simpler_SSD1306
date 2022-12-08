@@ -112,8 +112,8 @@ impl <'a>SSD1306<'a>
 	//----------------------------
 	pub fn draw_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
 	{
-		let w =  myAbs(x1, x2);
-		let h =  myAbs(y1, y2);
+		let w = myAbs(x1, x2);
+		let h = myAbs(y1, y2);
 		let x = myMin(x1,x2);
 		let y = myMin(y1,y2);
 
@@ -126,8 +126,8 @@ impl <'a>SSD1306<'a>
 	//----------------------------
 	pub fn draw_filled_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
 	{
-		let w =  myAbs(x1, x2);
-		let h =  myAbs(y1, y2);
+		let w = myAbs(x1, x2);
+		let h = myAbs(y1, y2);
 		let x = myMin(x1,x2);
 		let y = myMin(y1,y2);
 
@@ -231,16 +231,40 @@ impl <'a>SSD1306<'a>
 					acc-=inc*4096;
 				}
 			}			
-		}
+		}	
+	}
+
+	//----------------------------------------------------------------------------
 	
+	pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
+	{
+		let mut  bit :usize;
+		let mut  byte:usize;
+		
+		for cy in 0..h
+		{
+			bit= cy & 7;
+			for cx in 0..w			
+			{
+				let byte =data[cx+((cy/8)*cx)];
+				if (byte & (1<<bit))!=0
+				{
+					self.set_pixel(x+cx, y+cy,color);
+				}
+				else
+				{
+					self.set_pixel(x+cx, y+cy,!color);
+				}
+			}
+		}      
 	}
 	//----------------------------------------------------------------------------
 	pub fn draw_circle(&mut self, x: usize, y:usize, radius: usize,  color : bool)	
 	{
 		let mut f : isize = 1 - (radius as isize);
-		let mut  ddF_x : isize = 1;
-		let mut  ddF_y = -2 * (radius as isize);
-		let mut  x1 = 0;
+		let mut ddF_x : isize = 1;
+		let mut ddF_y = -2 * (radius as isize);
+		let mut x1 = 0;
 		let mut y1 = radius;
 		
 		
@@ -275,53 +299,4 @@ impl <'a>SSD1306<'a>
 
 
 
-/*
-void OLEDCore::drawRoundRect(int x1, int y1, int x2, int y2)
-{
-	int tmp;
 
-	if (x1>x2)
-	{
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-	}
-	if (y1>y2)
-	{
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-	if ((x2-x1)>4 && (y2-y1)>4)
-	{
-		setPixel(x1+1,y1+1);
-		setPixel(x2-1,y1+1);
-		setPixel(x1+1,y2-1);
-		setPixel(x2-1,y2-1);
-		drawHLine(x1+2, y1, x2-x1-3);
-		drawHLine(x1+2, y2, x2-x1-3);
-		drawVLine(x1, y1+2, y2-y1-3);
-		drawVLine(x2, y1+2, y2-y1-3);
-	}
-}
-
-
-void OLEDCore::drawBitmap(int x, int y, uint8_t* bitmap, int sx, int sy)
-{
-	int bit;
-	byte data;
-
-	for (int cy=0; cy<sy; cy++)
-	{
-		bit= cy % 8;
-		for(int cx=0; cx<sx; cx++)
-		{
-			data=bitmapbyte(cx+((cy/8)*sx));
-			if ((data & (1<<bit))>0)
-				setPixel(x+cx, y+cy);
-			else
-				clrPixel(x+cx, y+cy);
-		}
-	}      
-}
-*/
