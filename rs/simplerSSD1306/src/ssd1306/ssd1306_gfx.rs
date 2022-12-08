@@ -76,6 +76,8 @@ impl <'a>SSD1306<'a>
 					} );
     }
 	//-----------------------------	
+	// this is the fast one
+	//------------------------------
 	pub fn draw_hline(&mut self, x: usize, y:usize, length: usize, color : bool)
 	{
 		if x>=self.width || y >= self.height
@@ -87,9 +89,23 @@ impl <'a>SSD1306<'a>
 		{
 			end=self.width-1;
 		}
-		for i in x..=end
+		let screen_buffer =&mut self.raw;
+		let bim : u8 =(1<< (y & 7)) as u8;
+		let mut bym = ((y/8)*self.width)+x;
+		if color
 		{
-			self.set_pixel(i, y, color);
+			for i in x..=end
+			{				
+				screen_buffer[bym] |= bim;
+				bym+=1;
+			}
+		}else
+		{
+			for i in x..=end
+			{
+				screen_buffer[bym] &=!bim;
+				bym+=1;
+			}
 		}
 	}
 	//-----------------------------	
@@ -104,19 +120,29 @@ impl <'a>SSD1306<'a>
 		{
 			end=self.height-1;
 		}
-		for i in y..=end
+		let  screen_buffer =&mut self.raw;
+		if color
 		{
-			self.set_pixel(x, i, color);
+			for i in y..=end
+			{
+				let by=((i/8)*self.width)+x;
+				let bi=i & 7;
+
+				screen_buffer[by] |= 1<<bi;
+			}
+		}else {
+			for i in y..=end
+			{
+				let by=((i/8)*self.width)+x;
+				let bi=i & 7;
+
+				screen_buffer[by] &=!(1<<bi);
+			}
 		}
 	}
 	//----------------------------
-	pub fn draw_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
-	{
-		let w = myAbs(x1, x2);
-		let h = myAbs(y1, y2);
-		let x = myMin(x1,x2);
-		let y = myMin(y1,y2);
-
+	pub fn draw_rectangle(&mut self, x: usize, y:usize, w : usize, h : usize, color : bool)
+	{		
 		self.draw_hline(x, y, w, color);
 		self.draw_hline(x, y+h, w, color);
 
@@ -124,12 +150,8 @@ impl <'a>SSD1306<'a>
 		self.draw_vline(x+w, y, h, color);
 	}
 	//----------------------------
-	pub fn draw_filled_rectangle(&mut self, x1: usize, y1:usize, x2: usize, y2: usize, color : bool)
+	pub fn draw_filled_rectangle(&mut self, x: usize, y:usize, w: usize, h : usize, color : bool)
 	{
-		let w = myAbs(x1, x2);
-		let h = myAbs(y1, y2);
-		let x = myMin(x1,x2);
-		let y = myMin(y1,y2);
 
 		for yy in y..=(y+h)
 		{

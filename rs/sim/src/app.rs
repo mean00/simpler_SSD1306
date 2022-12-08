@@ -123,6 +123,8 @@ async fn main() {
 
     //
     ssd.draw_rectangle(20,20,64,40,true);
+    //
+   
 
     //
     ssd.draw_circle(60,40,10,true);
@@ -130,6 +132,9 @@ async fn main() {
     //ssd.print(24,24,"!!!#",true);
     ssd.print(44,24,"Hey!",true);
     ssd.print(74,48,"Hey!",false);
+
+    ssd.draw_filled_rectangle(10,20,44,20,true);
+    ssd.draw_filled_rectangle(20,24,24,8,false);
 
     ssd.update();
 
