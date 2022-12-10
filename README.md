@@ -9,7 +9,8 @@ This is a modified version of the SSD1306 driver from http://www.RinkyDinkElectr
 ## And the details ?
 
 * Rust : Only the modified page is refreshed on screen, that version is optimized a lot.
-* C++  : Basic optimization, draw_line is slow
+* Rust : There is a simulator to test your layout on a PC in the sim folder ( using macroquad ).
+* C++  : Basic optimization, draw_line is slow.
 
 * There is not a lot of sanity check in the code, it slows things down
 
