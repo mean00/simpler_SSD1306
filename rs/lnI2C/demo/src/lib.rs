@@ -53,9 +53,25 @@ pub extern "C" fn rust_demo()
         rnDelay(1000);
 
         ssd.clear_screen();
-        ssd.print(24,24,"!!!#",true);
-        ssd.print(44,24,"Hey!",true);
-        ssd.print(74,48,"Hey!",false);
+        ssd.print(4,24,"123456789",false);
+        ssd.print(4,44,"ABCDEFHIJ",true);
+        ssd.print(4,63,"#_!abcdef",true);
+
+        rnDelay(1000);
+        ssd.update();
+
+
+        ssd.print(4,24,"123456789",true);
+        ssd.print(4,44,"ABCDEFHIJ",true);
+        ssd.print(4,63,"#_!abcdef",true);
+        rnDelay(1000);
+        ssd.update();
+
+        ssd.print(4,24,"123456789",false);
+        ssd.print(4,44,"ABCDEFHIJ",true);
+        ssd.print(4,63,"#_!abcdef",true);
+        rnDelay(1000);
+        ssd.update();
 
         ssd.update();
         rnDelay(1000);
