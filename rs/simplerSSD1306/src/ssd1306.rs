@@ -6,12 +6,13 @@ use alloc::vec::Vec;
 use crate::glyph::{PFXfont,FontInfo};
 //
 use crate::access::SSD1306Access;
-use crate::ssd1306_init_seq1::init_sequence1;
+use crate::ssd1306_init_seq1::SSD1306_INIT_SEQUENCE1;
 
 mod ssd1306_gfx;
 mod ssd1306_text;
 //
 
+//
 #[derive(Copy, Clone)]
 pub enum FontFamily
 {
@@ -74,7 +75,7 @@ impl <'a>SSD1306<'a>
     //-------------------------------------------------------------------------------
     pub fn begin( &mut self)
     {
-          self.begin_custom(&init_sequence1);
+          self.begin_custom(&SSD1306_INIT_SEQUENCE1);
     }    
     pub fn begin_custom( &mut self,  init_sequence : &[u8])
     {
