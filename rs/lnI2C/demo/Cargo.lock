@@ -44,13 +44,14 @@ dependencies = [
  "cty",
  "lni2c_ssd1306",
  "rnarduino",
+ "simpler_gfx",
  "ssd1306",
 ]
 
 [[package]]
 name = "simpler_gfx"
 version = "0.1.0"
-source = "git+https://github.com/mean00/simpler_gfx.git#ec50b63705b6459570af1a5fe217c4e4440cabd0"
+source = "git+https://github.com/mean00/simpler_gfx.git#31145e50f3fccd7eed92767b60ca1af6995a8317"
 dependencies = [
  "cty",
 ]
