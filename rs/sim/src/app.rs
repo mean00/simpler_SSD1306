@@ -101,9 +101,8 @@ async fn main() {
             &OpenSans_Bold9pt7b    
             );
     
-    let init_seq : [u8;0] = [0;0];
 
-    ssd.begin(&init_seq);
+    ssd.begin();
 
     ssd.fill_screen(false);
 
