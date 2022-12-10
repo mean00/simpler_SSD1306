@@ -94,14 +94,14 @@ impl <'a>SSD1306<'a>
 		let mut bym = ((y/8)*self.width)+x;
 		if color
 		{
-			for i in x..=end
+			for _i in x..=end
 			{				
 				screen_buffer[bym] |= bim;
 				bym+=1;
 			}
 		}else
 		{
-			for i in x..=end
+			for _i in x..=end
 			{
 				screen_buffer[bym] &=!bim;
 				bym+=1;
@@ -260,8 +260,7 @@ impl <'a>SSD1306<'a>
 	
 	pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
 	{
-		let mut  bit :usize;
-		let mut  byte:usize;
+		let mut  bit :usize;		
 		
 		for cy in 0..h
 		{

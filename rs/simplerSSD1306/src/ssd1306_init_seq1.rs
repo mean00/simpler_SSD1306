@@ -1,7 +1,7 @@
 
 use crate::ssd1306_cmd::*;
 
-pub const init_sequence1 : [u8;25]=
+pub const SSD1306_INIT_SEQUENCE1 : [u8;25]=
 [
      SSD1306_DISPLAY_OFF
     ,SSD1306_SET_DISPLAY_CLOCK_DIV_RATIO
