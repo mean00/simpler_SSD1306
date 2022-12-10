@@ -25,6 +25,7 @@ use ssd1306::access::SSD1306Access;
 use ssd1306::ssd1306_cmd::*;
 use rnarduino::rnOsHelper::rnDelay as rnDelay;
 
+pub const SSD1306_DEFAULT_I2C_ADDRESS : u8 = 0x3c;
 
 //---------------------------------------
 pub fn fail()
@@ -62,10 +63,10 @@ impl SSD1306Access for i2c_ssd1306
     }
     fn  screen_update(&mut self, width : usize, height : usize, data : &[u8])
     {
-        let cmd : [u8;8]=[   SSD1306_COMMAND , SSD1306_SET_COLUMN_ADDR, 0, 127, SSD1306_SET_PAGE_ADDR,0,7,SSD1306_DATA];
+        let cmd : [u8;8]=[   SSD1306_COMMAND , SSD1306_SET_COLUMN_ADDR, 0, (width-1) as u8, SSD1306_SET_PAGE_ADDR,0,((height/8)-1) as u8,SSD1306_DATA];
         self.i2c.writeTo(self.address, &cmd );
         let intermediary : [u8;1]= [ SSD1306_DATA_CONTINUE ];
-        let lens: [u32;2]=[1,1024];
+        let lens: [u32;2]=[1,((width*height)/8) as u32];
         let datas : &[&[u8]]= &[&intermediary,data];
         self.i2c. multi_write_to(self.address, &lens, datas);    
     }
