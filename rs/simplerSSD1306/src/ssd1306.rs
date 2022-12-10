@@ -3,7 +3,7 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 //
-use crate::glyph::{PFXfont,FontInfo};
+use simpler_gfx::{PFXfont,FontInfo};
 //
 use crate::access::SSD1306Access;
 use crate::ssd1306_init_seq1::SSD1306_INIT_SEQUENCE1;

@@ -1,5 +1,5 @@
 use super :: SSD1306;
-use crate::glyph::{PFXglyph,FontInfo};
+use simpler_gfx::{PFXglyph,FontInfo};
 use super ::FontFamily;
 
 //--

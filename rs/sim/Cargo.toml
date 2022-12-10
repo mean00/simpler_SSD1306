@@ -12,3 +12,4 @@ path = "src/app.rs"
 [dependencies]
 macroquad = "0.3"
 ssd1306 = { version = "*" , path="../simplerSSD1306", features = ["sim"]}
+simpler_gfx = { git = "https://github.com/mean00/simpler_gfx.git"}

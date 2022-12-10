@@ -357,6 +357,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "simpler_gfx"
+version = "0.1.0"
+source = "git+https://github.com/mean00/simpler_gfx.git#ec50b63705b6459570af1a5fe217c4e4440cabd0"
+dependencies = [
+ "cty",
+]
+
+[[package]]
 name = "smallvec"
 version = "0.6.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -371,6 +379,7 @@ version = "0.1.0"
 dependencies = [
  "coca",
  "cty",
+ "simpler_gfx",
 ]
 
 [[package]]
@@ -378,6 +387,7 @@ name = "ssd1306_sim"
 version = "0.1.0"
 dependencies = [
  "macroquad",
+ "simpler_gfx",
  "ssd1306",
 ]
 

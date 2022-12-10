@@ -15,9 +15,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
 
 [[package]]
+name = "simpler_gfx"
+version = "0.1.0"
+source = "git+https://github.com/mean00/simpler_gfx.git#ec50b63705b6459570af1a5fe217c4e4440cabd0"
+dependencies = [
+ "cty",
+]
+
+[[package]]
 name = "ssd1306"
 version = "0.1.0"
 dependencies = [
  "coca",
  "cty",
+ "simpler_gfx",
 ]
