@@ -87,5 +87,16 @@ impl <'a>SSD1306<'a>
             }
             self.clear_screen();
     }    
+    // this does not seem to work (?)
+    pub fn scan_direction(&mut self, invert : bool)
+    {
+
+        self.access.send_command( match invert
+            {
+                false =>  crate::ssd1306_cmd::SSD1306_COM_SCAN_DIR_INC,
+                true  =>  crate::ssd1306_cmd::SSD1306_COM_SCAN_DIR_DEC,
+            });
+    }
+
 }
 // EOF
