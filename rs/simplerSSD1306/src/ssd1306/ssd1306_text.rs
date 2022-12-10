@@ -79,6 +79,15 @@ impl <'a>SSD1306<'a>
         let mut w:usize = w;
         let mut h:usize = h;
 
+        if x>=self.width
+        {
+            return;
+        }
+        if y>= self.height
+        {
+            return;
+        }
+
         if (w+x)>=self.width
         {    
             w=self.width-x;    
@@ -87,7 +96,7 @@ impl <'a>SSD1306<'a>
                  return ;
             }
         }    
-        if (h+y)>=self.height
+        if (h+y)>=self.height 
         {    
             h=self.height-y;
             if h<=0
