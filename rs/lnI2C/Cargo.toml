@@ -1,0 +1,33 @@
+[package] 
+authors = ["mean00 <mean00@gmail.com>"]
+edition = "2021"
+readme = "README.md"
+name = "lni2c_ssd1306"
+version = "0.0.0"
+
+
+[dependencies]
+cty         = "0.2.2"
+rnarduino   =           { path = "../../../lnArduino/rust/rnArduino/"}
+ssd1306     =           { path = "../simplerSSD1306"}
+
+[lib]
+name = "lni2c_ssd1306"
+path = "src/i2c_ssd1306.rs"
+crate-type = ["rlib"] # Creates static lib
+
+[profile.dev]
+codegen-units = 1
+debug = true
+lto = false
+opt-level       = 's'
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = false
+opt-level       = 's'
+
+[profile.dev.package."*"]
+codegen-units   = 1
+opt-level       = "s"

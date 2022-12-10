@@ -11,7 +11,8 @@ pub mod access;
 
 mod util;
 pub mod glyph;
-mod ssd1306_cmd;
+pub mod ssd1306_cmd;
 
 pub mod ssd1306;
 
+pub mod ssd1306_init_seq1;

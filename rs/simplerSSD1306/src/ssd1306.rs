@@ -6,6 +6,7 @@ use alloc::vec::Vec;
 use crate::glyph::{PFXfont,FontInfo};
 //
 use crate::access::SSD1306Access;
+use crate::ssd1306_init_seq1::init_sequence1;
 
 mod ssd1306_gfx;
 mod ssd1306_text;
@@ -71,7 +72,11 @@ impl <'a>SSD1306<'a>
         instance       
     }    
     //-------------------------------------------------------------------------------
-    pub fn begin( &mut self,  init_sequence : &[u8])
+    pub fn begin( &mut self)
+    {
+          self.begin_custom(&init_sequence1);
+    }    
+    pub fn begin_custom( &mut self,  init_sequence : &[u8])
     {
             self.access.reset();
             let n=init_sequence.len();
