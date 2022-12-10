@@ -36,6 +36,8 @@ impl <'a>SSD1306<'a>
 		let by=((y/8)*self.width)+x;
 		let bi=y & 7;
 
+		self.dirty[y>>3]=true; // page
+
 		if color
 		{
 			screen_buffer[by] |= 1<<bi;
@@ -48,13 +50,20 @@ impl <'a>SSD1306<'a>
 
 	//-----------------------------
     pub fn clear_screen(&mut self)
-    {
+    {		
         self.fill_screen(false);
     }
 	//-----------------------------	
     pub fn fill_screen(&mut self,color : bool)
     {        
-        let filler = 255*(color as u8);
+        let filler: u8 = match color 
+		{
+			false => 0,
+			true => 0xff,
+		} ;
+		
+		self.dirty = [true; 8]; // mark all dirty
+
 		for i in 	&mut self.raw
 		{
 			*i = filler 
@@ -92,6 +101,7 @@ impl <'a>SSD1306<'a>
 		let screen_buffer =&mut self.raw;
 		let bim : u8 =(1<< (y & 7)) as u8;
 		let mut bym = ((y/8)*self.width)+x;
+		self.dirty[y>>3]=true; // page
 		if color
 		{
 			for _i in x..=end

@@ -61,13 +61,17 @@ impl SSD1306Access for i2c_ssd1306
         self.i2c.writeTo(self.address, &cmd2);
     
     }
-    fn  screen_update(&mut self, width : usize, height : usize, data : &[u8])
+    fn screen_update(&mut self, width : usize, height : usize, first_page : usize, nb_page : usize, data : &[u8])     
     {
-        let cmd : [u8;8]=[   SSD1306_COMMAND , SSD1306_SET_COLUMN_ADDR, 0, (width-1) as u8, SSD1306_SET_PAGE_ADDR,0,((height/8)-1) as u8,SSD1306_DATA];
+        let cmd : [u8;8]=[   SSD1306_COMMAND , 
+                    SSD1306_SET_COLUMN_ADDR, 0, (width-1) as u8, 
+                    SSD1306_SET_PAGE_ADDR, first_page as u8 ,( first_page+nb_page-1  ) as u8,
+                    SSD1306_DATA];
         self.i2c.writeTo(self.address, &cmd );
         let intermediary : [u8;1]= [ SSD1306_DATA_CONTINUE ];
-        let lens: [u32;2]=[1,((width*height)/8) as u32];
-        let datas : &[&[u8]]= &[&intermediary,data];
+        let lens: [u32;2]=[1,((width*nb_page)) as u32];        
+        let sub_data = &data[ (first_page*width)..];
+        let datas : &[&[u8]]= &[&intermediary, sub_data];
         self.i2c. multi_write_to(self.address, &lens, datas);    
     }
     fn  reset(&mut self, )

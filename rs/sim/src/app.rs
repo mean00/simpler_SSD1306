@@ -49,11 +49,11 @@ impl SSD1306Access for quadAccess
     {
 
     }
-    //-----------------------------    
-    fn  screen_update(&mut self, width : usize, height : usize, data : &[u8])
+    //-----------------------------   
+    fn screen_update(&mut self, width : usize, height : usize, first_page : usize, nb_page : usize, data : &[u8]) 
     {
         let zoom = 4;
-        for page in 0..8
+        for page in first_page..(first_page+nb_page)
         {
             for seg in 0..128
             {

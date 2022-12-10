@@ -32,6 +32,7 @@ pub struct SSD1306 <'a>
     cursor_y        : usize,
     invert          : bool,
     raw             : Vec::<u8>,
+    dirty            : [bool;8],
 }
 //-----------------
 impl <'a>SSD1306<'a>
@@ -42,9 +43,34 @@ impl <'a>SSD1306<'a>
         return &self.font_infos[ix];
     }
     pub fn update(&mut self)
-    {
+    {   
         
-        self.access.screen_update(self.width, self.height, &self.raw);
+        let mut first : usize =0;
+        let mut last :  usize =0;
+        let mut found_first : bool = false;
+        let mut found_last :  bool = false;
+        let rnge = self.height/8;
+        for i in 0..rnge
+        {
+            if self.dirty[i] && !found_first
+            {
+                first=i;
+                found_first=true;
+            }
+            if self.dirty[rnge-i-1] && !found_last
+            {
+                last=rnge-i-1;
+                found_last=true;
+            }
+        }
+        if !found_first // not dirty, nothing to do
+        {
+            return;
+        }
+
+        self.access.screen_update(self.width, self.height, first, last+1-first, &self.raw);
+
+        self.dirty = [false;8]
     }
     //-------------------------------------------------------------------------------
     pub fn new (w: usize, h:usize, access: &'a mut dyn SSD1306Access, 
@@ -67,6 +93,7 @@ impl <'a>SSD1306<'a>
             cursor_y        : 0,
             invert          : false,
             raw             : Vec::<u8>::with_capacity(fs),
+            dirty           : [false;8],
         };
         unsafe { instance.raw.set_len(fs)};
         instance.check_font( );
