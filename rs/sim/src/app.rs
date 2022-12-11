@@ -16,7 +16,7 @@ use crate::testFont::OpenSans_Bold9pt7b;
 
 const SCREEN_WIDTH: usize = 128;
 const SCREEN_HEIGHT: usize = 64;
-
+const bitmap : &[ u8;512 ]= include_bytes!("rust_logo_compressed.h.bin");
 struct quadAccess 
 {    
     width  : usize,
@@ -82,9 +82,9 @@ impl SSD1306Access for quadAccess
 #[macroquad::main("SSD1306")]
 async fn main() {
     let mut loops = 0;
-    let bitmap_width = 96;
-    let bitmap_height = 96;
-    let bitmap = include_bytes!("test_bitmap.bin");
+    let bitmap_width = 64;
+    let bitmap_height = 64;
+    
     loop {
     loops+=1;
     if loops > 150
@@ -131,6 +131,9 @@ async fn main() {
 
     ssd.draw_filled_rectangle(10,20,44,20,true);
     ssd.draw_filled_rectangle(20,24,24,8,false);
+
+
+    ssd.draw_bitmap(0,0,64,64,bitmap, false);
 
     ssd.update();
 
