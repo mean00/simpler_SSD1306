@@ -270,21 +270,24 @@ impl <'a>SSD1306<'a>
 	
 	pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
 	{
-		let mut  bit :usize;		
+		let mut  bit : u8;		
 		
 		for cy in 0..h
-		{
-			bit= cy & 7;
-			for cx in 0..w			
+		{			
+			for cx in 0..(w/8)
 			{
-				let byte =data[cx+((cy/8)*cx)];
-				if (byte & (1<<bit))!=0
+				let byte =data[ (cx+((cy*w)/8))];
+				for r in 0..8
 				{
-					self.set_pixel(x+cx, y+cy,color);
-				}
-				else
-				{
-					self.set_pixel(x+cx, y+cy,!color);
+					bit= 1<< (7-(r & 7));
+					if (byte & bit)!=0
+					{
+						self.set_pixel(x+cx*8+r, y+cy,color);
+					}
+					else
+					{
+						self.set_pixel(x+cx*8+r, y+cy,!color);
+					}
 				}
 			}
 		}      
