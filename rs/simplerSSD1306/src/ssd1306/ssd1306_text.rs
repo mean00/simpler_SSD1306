@@ -104,7 +104,7 @@ impl <'a>SSD1306<'a>
                 return;
             }
         }    
-        self.draw_filled_rectangle( x, y, x+w-1, y+h-1,color);
+        self.draw_filled_rectangle( x, y, w-1, h-1,color);
         return ;
     }
 
