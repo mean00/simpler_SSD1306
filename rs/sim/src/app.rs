@@ -107,6 +107,9 @@ async fn main() {
     ssd.fill_screen(false);
 
     ssd.update();
+    
+   // ssd.print(36,26,"Hey!",true);
+    
     //next_frame().await;
     ssd.draw_line(10,10,120,60,true); // \
     //next_frame().await;
@@ -121,19 +124,20 @@ async fn main() {
     ssd.draw_line(10,10,120,10,true);// - top
 
     //
+    
     ssd.draw_rectangle(20,20,64,40,true);
     //
     ssd.draw_circle(60,40,10,true);
 
-    //ssd.print(24,24,"!!!#",true);
-    ssd.print(44,24,"Hey!",true);
-    ssd.print(74,48,"Hey!",false);
+    ssd.print(66,24,"!!!#",true);
+    ssd.print(70,26,"Hey!",true);
+    ssd.print(74,48,"Hola",false);
 
-    ssd.draw_filled_rectangle(10,20,44,20,true);
+    ssd.draw_filled_rectangle(10,20,40,20,true);
     ssd.draw_filled_rectangle(20,24,24,8,false);
 
 
-    ssd.draw_bitmap(0,0,64,64,bitmap, false);
+    ssd.draw_bitmap(2,0,64,64,bitmap, false);
 
     ssd.update();
 
