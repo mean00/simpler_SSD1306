@@ -3,6 +3,7 @@
 #![allow(unused_variables)]
 #![allow(non_snake_case)]
 use macroquad::prelude::*;
+mod bitmap_prerotated;
 extern crate ssd1306;
 
 use ssd1306::ssd1306::SSD1306;
@@ -137,7 +138,8 @@ async fn main() {
     ssd.draw_filled_rectangle(20,24,24,8,false);
 
 
-    ssd.draw_bitmap(2,0,64,64,bitmap, false);
+    //ssd.draw_bitmap(0,0,64,64,bitmap, false);
+    ssd.draw_bitmap(64,0,bitmap_prerotated::WIDTH,bitmap_prerotated::HEIGHT,&bitmap_prerotated::BITMAP, false);
 
     ssd.update();
 

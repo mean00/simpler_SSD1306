@@ -266,32 +266,7 @@ impl <'a>SSD1306<'a>
 		}	
 	}
 
-	//----------------------------------------------------------------------------
 	
-	pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
-	{
-		let mut  bit : u8;		
-		
-		for cy in 0..h
-		{			
-			for cx in 0..(w/8)
-			{
-				let byte =data[ (cx+((cy*w)/8))];
-				for r in 0..8
-				{
-					bit= 1<< (7-(r & 7));
-					if (byte & bit)!=0
-					{
-						self.set_pixel(x+cx*8+r, y+cy,color);
-					}
-					else
-					{
-						self.set_pixel(x+cx*8+r, y+cy,!color);
-					}
-				}
-			}
-		}      
-	}
 	//----------------------------------------------------------------------------
 	pub fn draw_circle(&mut self, x: usize, y:usize, radius: usize,  color : bool)	
 	{
@@ -328,7 +303,87 @@ impl <'a>SSD1306<'a>
 			self.set_pixel(x - y1, y - x1, color);
 		}
 	}
+	//----------------------------------------------------------------------------
+	
+	pub fn draw_bitmap_aligned(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
+	{
+		let mut  bit : u8;		
+		let  screen_buffer =&mut self.raw;
+		for cy in 0..h
+		{			
+			for cx in 0..(w/8)
+			{
+				let byte =data[ (cx+((cy*w)/8))];
 
+
+				let xx = x+cx;
+				let yy = y+cy;
+
+				let by=((yy/8)*self.width)+xx;
+				let bi=yy & 7;
+				self.dirty[yy>>3]=true; // page
+				screen_buffer[by] = byte;				
+			}
+		}
+	}
+	/*
+	pub fn set_pixel(&mut self, x: usize, y: usize, color : bool)	
+	{
+		let  screen_buffer =&mut self.raw;
+
+		if   (x>=self.width) ||  (y>=self.height)
+		{
+			return;
+		}
+		
+		let by=((y/8)*self.width)+x;
+		let bi=y & 7;
+
+		self.dirty[y>>3]=true; // page
+
+		if color
+		{
+			screen_buffer[by] |= 1<<bi;
+		}else
+		{
+			screen_buffer[by] &=!(1<<bi);
+		}			
+	}
+
+	*/
+//----------------------------------------------------------------------------
+	
+pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
+{
+
+	if((x&7)==0)&&((w&7)==0)
+	{
+		self.draw_bitmap_aligned(x,y,w,h,data,color);
+		return;
+	}
+
+	let mut  bit : u8;		
+	
+	for cy in 0..h
+	{			
+		for cx in 0..(w/8)
+		{
+			let byte =data[ (cx+((cy*w)/8))];
+			for r in 0..8
+			{
+				bit= 1<< (7-(r & 7));
+				if (byte & bit)!=0
+				{
+					self.set_pixel(x+cx*8+r, y+cy,color);
+				}
+				else
+				{
+					self.set_pixel(x+cx*8+r, y+cy,!color);
+				}
+			}
+		}
+	}      
+}
 }
 
 
