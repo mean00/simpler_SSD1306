@@ -17,7 +17,7 @@ use crate::testFont::OpenSans_Bold9pt7b;
 
 const SCREEN_WIDTH: usize = 128;
 const SCREEN_HEIGHT: usize = 64;
-const bitmap : &[ u8;512 ]= include_bytes!("rust_logo_compressed.h.bin");
+const SIMPLE_BITMAP : &[ u8;512 ]= include_bytes!("rust_logo_compressed.h.bin");
 struct quadAccess 
 {    
     width  : usize,
@@ -138,8 +138,8 @@ async fn main() {
     ssd.draw_filled_rectangle(20,24,24,8,false);
 
 
-    //ssd.draw_bitmap(0,0,64,64,bitmap, false);
-    ssd.draw_bitmap(64,0,bitmap_prerotated::WIDTH,bitmap_prerotated::HEIGHT,&bitmap_prerotated::BITMAP, false);
+    ssd.draw_bitmap(0,0,64,64,SIMPLE_BITMAP, false);
+    ssd.draw_bitmap_prerotated(64,0,bitmap_prerotated::WIDTH,bitmap_prerotated::HEIGHT,&bitmap_prerotated::BITMAP, true);
 
     ssd.update();
 
