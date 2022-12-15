@@ -146,7 +146,7 @@ async fn main() {
     ssd.draw_bitmap_prerotated_shrinked(64,0,
                     bitmap_prerotated_shrinked::WIDTH,
                     bitmap_prerotated_shrinked::HEIGHT,
-                    &bitmap_prerotated_shrinked::BITMAP, 
+                    &bitmap_prerotated_shrinked::BITMAP_HS, 
                     true);
 
 
