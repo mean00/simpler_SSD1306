@@ -9,7 +9,7 @@ This is a modified version of the SSD1306 driver from http://www.RinkyDinkElectr
 ## And the details ?
 
 * Rust : Only the modified page is refreshed on screen, that version is optimized a lot.
-* Rust : Support for pre-rotated bitmaps, much faster (see the bitmap_generation_tool), raw or heatshrunk
+* Rust : Support for pre-rotated bitmaps (see the bitmap_generation_tool), raw or heatshrunk. Pre rotated blit is very fast.
 * Rust : There is a simulator to test your layout on a PC in the sim folder ( using macroquad ).
 * C++  : Basic optimization, draw_line is slow.
 
