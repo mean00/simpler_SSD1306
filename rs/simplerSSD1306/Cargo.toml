@@ -5,9 +5,11 @@ edition = "2021"
 
 [features]
 sim = []
+hs = ["heatshrink_byte"]
 
 [dependencies]
 cty = "0.2.2"
 coca = "0.3"
 simpler_gfx= {git="https://github.com/mean00/simpler_gfx.git"}
+heatshrink_byte = { git = "https://github.com/mean00/heatshrink" , features = ["encode"] , optional = true}
 

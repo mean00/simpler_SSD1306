@@ -1,6 +1,8 @@
 
 use super::SSD1306;
 use crate::ssd1306_cmd::*;
+#[cfg(feature = "hs")]
+use heatshrink_byte as hs;
 
 fn myAbs(a : usize, b: usize) -> usize
 {
@@ -336,7 +338,7 @@ pub fn draw_bitmap(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[
 	The image must have been pre_rotated
 	Y must be a multiple of 8
 */
-pub fn draw_bitmap_prerotated(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
+pub fn draw_bitmap_prerotated(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], _color : bool)	
 {
 
 	if((y&7)!=0)||((h&7)!=0)
@@ -356,12 +358,54 @@ pub fn draw_bitmap_prerotated(&mut self, x: usize, y:usize, w: usize,  h : usize
 	// simple blit
 	for page in 0..(h/8) // page
 	{		
-		let   screen_buffer = &mut screen_buffer_all[(x+((y+page*8)*self.width)/8)..];
-		let   data_buffer = & data[(page*w)..];
-		for cx in 0..w
+		let   screen_buffer = &mut screen_buffer_all[(x+((y+page*8)*self.width)/8)..((x+((y+page*8)*self.width)/8)+w)];
+		let   data_buffer = & data[(page*w)..(page*w+w)];
+		screen_buffer[..].clone_from_slice(data_buffer);
+	}      
+}
+/**
+ *  same as above but heatshrinked
+ * 
+ * 
+ */
+#[cfg(feature = "hs")]
+pub fn draw_bitmap_prerotated_shrinked(&mut self, x: usize, y:usize, w: usize,  h : usize, data : &[u8], color : bool)	
+{
+	if((y&7)!=0)||((h&7)!=0)
+	{
+		//rnLogger("Not multiple of 8");
+		return;
+	}
+
+	let   screen_buffer_all =&mut self.raw;
+	
+	// dirty pages
+	let  page0 = y/8;
+	for page in 0..(h/8) // page
+	{		
+		self.dirty[page+page0]=true;
+	}
+
+	// simple hs blit
+	let config = hs::Config::new(7, 4).unwrap();
+	let mut decoder = hs::decoder::HeatshrinkDecoder::new(data,&config);
+
+	let start  = x+((y)*self.width)/8;
+	for page in 0..(h/8) // page
+	{		
+		let   screen_buffer = &mut screen_buffer_all[ (start+(page*self.width))..];
+		if color
 		{
-			let byte =data_buffer[cx];
-			screen_buffer[cx] = byte;
+			for cx in 0..w
+			{
+				screen_buffer[cx] = decoder.next();
+			}
+		}else
+		{
+			for cx in 0..w
+			{
+				screen_buffer[cx] = !decoder.next();
+			}
 		}
 	}      
 }
