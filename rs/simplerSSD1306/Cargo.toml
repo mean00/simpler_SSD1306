@@ -11,5 +11,5 @@ hs = ["heatshrink_byte"]
 cty = "0.2.2"
 coca = "0.3"
 simpler_gfx= {git="https://github.com/mean00/simpler_gfx.git"}
-heatshrink_byte = { git = "https://github.com/mean00/heatshrink" , features = ["encode"] , optional = true}
+heatshrink_byte = { git = "https://github.com/mean00/heatshrink" , optional = true}
 
