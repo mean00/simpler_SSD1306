@@ -21,6 +21,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "129b101ddfee640565f7c07b301a31d95aa21e5acef21a491c307139f5fa4c91"
 
 [[package]]
+name = "heatshrink_byte"
+version = "0.1.0"
+source = "git+https://github.com/mean00/heatshrink#ba7810a670cb8a8e6b6b89ef1fe606555e1258bd"
+
+[[package]]
 name = "lni2c_ssd1306"
 version = "0.0.0"
 dependencies = [
@@ -62,5 +67,6 @@ version = "0.1.0"
 dependencies = [
  "coca",
  "cty",
+ "heatshrink_byte",
  "simpler_gfx",
 ]

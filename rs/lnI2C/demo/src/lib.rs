@@ -7,6 +7,9 @@
 
 mod waree9;
 
+mod bitmap_prerotated;
+mod bitmap_prerotated_shrinked;
+
 use rnarduino as rn;
 
 use rn::rnOsHelper::rnDelay;
@@ -36,6 +39,7 @@ pub extern "C" fn rust_demo()
     let mut direction : bool = false;
     while true
     {
+
         ssd.clear_screen();
         ssd.draw_line(10,10,120,60,true); // \
         ssd.draw_line(10,60,120,10,true); // /
@@ -49,7 +53,6 @@ pub extern "C" fn rust_demo()
         ssd.draw_filled_rectangle(20,24,24,8,false);
 
         ssd.update();
-
         rnDelay(1000);
 
         ssd.clear_screen();
@@ -57,24 +60,46 @@ pub extern "C" fn rust_demo()
         ssd.print(4,44,"ABCDEFHIJ",true);
         ssd.print(4,63,"#_!abcdef",true);
 
-        rnDelay(1000);
         ssd.update();
+        rnDelay(1000);
 
 
         ssd.print(4,24,"123456789",true);
         ssd.print(4,44,"ABCDEFHIJ",true);
         ssd.print(4,63,"#_!abcdef",true);
-        rnDelay(1000);
+
         ssd.update();
+        rnDelay(1000);
 
         ssd.print(4,24,"123456789",false);
         ssd.print(4,44,"ABCDEFHIJ",true);
         ssd.print(4,63,"#_!abcdef",true);
-        rnDelay(1000);
-        ssd.update();
 
         ssd.update();
         rnDelay(1000);
+
+        ssd.print(4,24,"123456789",false);
+        ssd.print(4,44,"ABCDEFHIJ",true);
+        ssd.print(4,63,"#_!abcdef",true);
+
+        ssd.update();
+        rnDelay(1000);
+
+
+        ssd.draw_bitmap_prerotated(0,0,
+            bitmap_prerotated::WIDTH,
+            bitmap_prerotated::HEIGHT,
+                        &bitmap_prerotated::BITMAP, true);
+        ssd.draw_bitmap_prerotated_shrinked(64,0,
+                        bitmap_prerotated_shrinked::WIDTH,
+                        bitmap_prerotated_shrinked::HEIGHT,
+                        &bitmap_prerotated_shrinked::BITMAP_HS, 
+                        true);
+    
+    
+        ssd.update();
+        rnDelay(1000);
+
     }
 
 }

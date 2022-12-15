@@ -10,7 +10,7 @@ edition = "2021"
 cty = "0.2.2"
 rnarduino = { path = "../lnArduino/rust/rnArduino" }
 lni2c_ssd1306 = { path = "../simpler_SSD1306/rs/lnI2C" }
-ssd1306 = { path = "../simpler_SSD1306/rs/simplerSSD1306" }
+ssd1306 = { path = "../simpler_SSD1306/rs/simplerSSD1306", features = ["hs"] }
 simpler_gfx = { git = "https://github.com/mean00/simpler_gfx.git", default-features = false}
 [lib]
 name = "demo"
