@@ -1,28 +1,18 @@
 #![no_std]
-#![allow(unused_imports)]
+/*#![allow(unused_imports)]
 #![allow(unused_mut)]
 #![allow(unused_variables)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+*/
 
 extern crate ssd1306;
-
 extern crate rnarduino as rn;
-
-use rn::rnGpio as rnGpio;
-use rn::rnI2C::rnI2C as rnI2C;
-
-use rn::rnGpio::rnPin as rnPin;
-use rnarduino::rnOsHelper::rnDelayUs;
-use rnGpio::rnFastIO as rnFastIO;
-
-
-use rnPin::NoPin;
-
+use rn::rn_i2c::rnI2C as rnI2C;
 use ssd1306::access::SSD1306Access;
 use ssd1306::ssd1306_cmd::*;
-use rnarduino::rnOsHelper::rnDelay as rnDelay;
+
 
 pub const SSD1306_DEFAULT_I2C_ADDRESS : u8 = 0x3c;
 
@@ -42,7 +32,7 @@ impl i2c_ssd1306
 {   
     pub fn new(i2c_interface: rnI2C , address : u8) -> Self
     {
-        let mut me : i2c_ssd1306 = i2c_ssd1306
+        let me : i2c_ssd1306 = i2c_ssd1306
         {
                 i2c         : i2c_interface,
                 address     : address,                
@@ -60,7 +50,7 @@ impl SSD1306Access for i2c_ssd1306
         self.i2c.write_to(self.address, &cmd2);
     
     }
-    fn screen_update(&mut self, width : usize, height : usize, first_page : usize, nb_page : usize, data : &[u8])     
+    fn screen_update(&mut self, width : usize, _height : usize, first_page : usize, nb_page : usize, data : &[u8])     
     {
         let cmd : [u8;8]=[   SSD1306_COMMAND , 
                     SSD1306_SET_COLUMN_ADDR, 0, (width-1) as u8, 
