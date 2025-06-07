@@ -5,12 +5,10 @@
 #![feature(stmt_expr_attributes)]
 extern crate alloc;
 
-
-
 pub mod access;
 
-mod util;
 pub mod ssd1306_cmd;
+mod util;
 
 pub mod ssd1306;
 
