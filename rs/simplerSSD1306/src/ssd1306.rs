@@ -109,6 +109,10 @@ impl SSD1306 {
         instance
     }
     //-------------------------------------------------------------------------------
+    pub fn redraw_all(&mut self) {
+        self.dirty = [true; 8];
+        self.update();
+    }
     pub fn begin(&mut self) {
         self.begin_custom(&SSD1306_INIT_SEQUENCE1);
     }
