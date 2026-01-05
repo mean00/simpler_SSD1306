@@ -107,8 +107,8 @@ impl SSD1306 {
         }
         let first: usize = self.current_font().font.first as usize;
         let glyph: &PFXglyph = &self.current_font().font.glyphs[c - first];
-        let w = glyph.width as usize;
-        let h = glyph.height as usize;
+        let w = glyph.width as isize;
+        let h = glyph.height as isize;
 
         // also ' ' here
         if (w <= 0) || (h <= 0) {
@@ -127,7 +127,7 @@ impl SSD1306 {
         }
 
         let xo = glyph.x_offset; // sic
-        if (self.cursor_x + ((xo as usize) + w)) > self.width {
+        if (self.cursor_x as isize + ((xo as isize) + w)) > self.width as isize {
             self.cursor_x = 0;
             self.cursor_y += self.current_font().font.y_advance as usize;
         }

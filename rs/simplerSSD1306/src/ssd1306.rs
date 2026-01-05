@@ -67,7 +67,7 @@ impl SSD1306 {
         self.dirty = [false; 8]
     }
     //-------------------------------------------------------------------------------
-    pub fn new<'a>(
+    pub fn new(
         w: usize,
         h: usize,
         access: Box<dyn SSD1306Access>,
