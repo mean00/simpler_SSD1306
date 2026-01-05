@@ -4,7 +4,7 @@ use simpler_gfx::{FontInfo, PFXglyph};
 
 //--
 
-impl<'a> SSD1306<'a> {
+impl SSD1306 {
     //
     pub fn select_font(&mut self, f: FontFamily) {
         self.current_font_index = f;

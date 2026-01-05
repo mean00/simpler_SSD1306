@@ -17,8 +17,7 @@ fn myMin(a: usize, b: usize) -> usize {
     a
 }
 //--------------
-
-impl<'a> SSD1306<'a> {
+impl<'a> SSD1306 {
     //-----------------------------
     pub fn set_pixel(&mut self, x: usize, y: usize, color: bool) {
         let screen_buffer = &mut self.raw;

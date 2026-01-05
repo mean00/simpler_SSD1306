@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 extern crate alloc;
+use alloc::boxed::Box;
 
 use alloc::vec::Vec;
 //
@@ -20,10 +21,10 @@ pub enum FontFamily {
     BigFont = 2,
 }
 //-----------
-pub struct SSD1306<'a> {
+pub struct SSD1306 {
     width: usize,
     height: usize,
-    access: &'a mut dyn SSD1306Access,
+    access: Box<dyn SSD1306Access>,
     current_font_index: FontFamily,
     font_infos: [FontInfo; 3],
     cursor_x: usize,
@@ -33,7 +34,7 @@ pub struct SSD1306<'a> {
     dirty: [bool; 8],
 }
 //-----------------
-impl<'a> SSD1306<'a> {
+impl SSD1306 {
     fn current_font(&self) -> &FontInfo {
         let ix = self.current_font_index as usize;
         &self.font_infos[ix]
@@ -66,14 +67,14 @@ impl<'a> SSD1306<'a> {
         self.dirty = [false; 8]
     }
     //-------------------------------------------------------------------------------
-    pub fn new(
+    pub fn new<'a>(
         w: usize,
         h: usize,
-        access: &'a mut dyn SSD1306Access,
+        access: Box<dyn SSD1306Access>,
         smallfont: &'static PFXfont,
         mediumfont: &'static PFXfont,
         bigfont: &'static PFXfont,
-    ) -> SSD1306<'a> {
+    ) -> SSD1306 {
         let fs = (w * h) >> 3;
         let mut instance = SSD1306 {
             width: w,
@@ -108,6 +109,10 @@ impl<'a> SSD1306<'a> {
         instance
     }
     //-------------------------------------------------------------------------------
+    pub fn redraw_all(&mut self) {
+        self.dirty = [true; 8];
+        self.update();
+    }
     pub fn begin(&mut self) {
         self.begin_custom(&SSD1306_INIT_SEQUENCE1);
     }
