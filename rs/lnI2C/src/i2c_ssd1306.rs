@@ -1,15 +1,5 @@
-#![no_std]
-/*#![allow(unused_imports)]
-#![allow(unused_mut)]
-#![allow(unused_variables)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-#![allow(dead_code)]
-*/
-
-extern crate rnarduino as rn;
 extern crate ssd1306;
-use rn::rn_i2c::rnI2C;
+use rust_esprit::i2c;
 use ssd1306::access::SSD1306Access;
 use ssd1306::ssd1306_cmd::*;
 
@@ -20,22 +10,22 @@ pub fn fail() {
     panic!("oop");
 }
 //---------------------------------------
-pub struct i2c_ssd1306 {
-    i2c: rnI2C,
+pub struct I2cSsd106 {
+    i2c: i2c,
     address: u8,
 }
 //---------------------------------------
-impl i2c_ssd1306 {
-    pub fn new(i2c_interface: rnI2C, address: u8) -> Self {
-        let me: i2c_ssd1306 = i2c_ssd1306 {
+impl I2cSsd106 {
+    pub fn new(i2c_interface: i2c, address: u8) -> Self {
+        let me: I2cSsd106 = I2cSsd106 {
             i2c: i2c_interface,
-            address: address,
+            address,
         };
         me
     }
 }
 //-----------------------------------
-impl SSD1306Access for i2c_ssd1306 {
+impl SSD1306Access for I2cSsd106 {
     fn send_command(&mut self, command: u8) {
         let cmd2: [u8; 2] = [SSD1306_COMMAND, command];
         self.i2c.write_to(self.address, &cmd2);
