@@ -13,4 +13,5 @@ path = "src/app.rs"
 ssd1306 = { version = "*" , path="../simplerSSD1306", features = ["sim","hs"]}
 simpler_gfx = { git = "https://github.com/mean00/simpler_gfx.git", default-features = false}
 minifb = "0.28"
+numtoa = "0.2.4"
 

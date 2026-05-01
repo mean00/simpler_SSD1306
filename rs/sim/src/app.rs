@@ -4,6 +4,7 @@
 #![allow(non_snake_case)]
 
 use minifb::{Key, Window, WindowOptions};
+use numtoa::NumToA;
 
 //mod bitmap_prerotated;
 mod bitmap_prerotated_shrinked;
@@ -107,7 +108,6 @@ impl SSD1306Access for miniFbAccess {
 
 //---
 fn main() {
-    let mut loops = 0;
     let bitmap_width = 64;
     let bitmap_height = 64;
     let access = miniFbAccess::new(SCREEN_WIDTH, SCREEN_HEIGHT, ZOOM);
@@ -126,6 +126,8 @@ fn main() {
     ssd.fill_screen(false);
 
     ssd.update();
+    let mut buf = [0u8; 20];
+    let mut val: i32 = 1;
     loop {
         // ssd.print(36,26,"Hey!",true);
 
@@ -173,7 +175,11 @@ fn main() {
             &bt_logo::BITMAP_HS,
             true,
         );
+
+        let s = val.numtoa_str(10, &mut buf); // base 10
+        ssd.print(1, 32, s, false);
         ssd.update();
+        val += 1;
     }
-    std::println!("Exiting....");
+    //    std::println!("Exiting....");
 }
