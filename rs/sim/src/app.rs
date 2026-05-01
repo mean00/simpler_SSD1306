@@ -2,11 +2,12 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 #![allow(non_snake_case)]
-use macroquad::prelude::*;
+
+use minifb::{Key, Window, WindowOptions};
 
 //mod bitmap_prerotated;
 mod bitmap_prerotated_shrinked;
-
+//
 mod bt_logo;
 
 extern crate ssd1306;
@@ -20,23 +21,43 @@ use crate::testFont::OpenSans_Bold9pt7b;
 
 const SCREEN_WIDTH: usize = 128;
 const SCREEN_HEIGHT: usize = 64;
+const ZOOM: usize = 4;
 //const SIMPLE_BITMAP: &[u8; 512] = include_bytes!("rust_logo_compressed.h.bin");
-struct quadAccess {
-    white: Color,
-    black: Color,
+struct miniFbAccess {
+    buffer: Vec<u32>,
+    window: Window,
+    width: usize,
+    height: usize,
+    zoom: usize,
 }
 //----------------------
-impl quadAccess {
-    fn new() -> quadAccess {
-        quadAccess {
-            white: Color::new(1., 1., 1., 1.0),
-            black: Color::new(0., 0., 0., 1.0),
-        }
+impl miniFbAccess {
+    fn new(w: usize, h: usize, z: usize) -> miniFbAccess {
+        let mut access = miniFbAccess {
+            width: w,
+            height: h,
+            zoom: z,
+            buffer: vec![0; w * h * h * h],
+            window: Window::new(
+                "Simpler SSD1306 sim -  ESC to Exit",
+                w * z,
+                h * z,
+                WindowOptions::default(),
+            )
+            .unwrap_or_else(|e| panic!("{}", e)),
+        };
+        access.window.set_target_fps(30);
+        access
     }
     fn flush(&mut self) {}
 }
+impl miniFbAccess {
+    fn running(&self) -> bool {
+        self.window.is_open() && !self.window.is_key_down(Key::Escape)
+    }
+}
 //-------
-impl SSD1306Access for quadAccess {
+impl SSD1306Access for miniFbAccess {
     //-----------------------------
     fn send_command(&mut self, command: u8) {}
     //-----------------------------
@@ -48,25 +69,35 @@ impl SSD1306Access for quadAccess {
         nb_page: usize,
         data: &[u8],
     ) {
-        let zoom = 4;
         for page in first_page..(first_page + nb_page) {
             for seg in 0..128 {
                 let u = data[page * 128 + seg];
                 for r in 0..8 {
                     let pix = u & (1 << (r as u32));
-                    draw_rectangle(
-                        (zoom * (seg)) as f32,
-                        (zoom * (page * 8 + r)) as f32,
-                        zoom as f32,
-                        zoom as f32,
-                        match pix {
-                            0 => self.black,
-                            _ => self.white,
-                        },
-                    );
+                    let x = seg;
+                    let y = page * 8 + r;
+                    let color = match pix {
+                        0 => 0,
+                        _ => 0xffff,
+                    };
+                    for yy in 0..self.zoom {
+                        let offset = y * self.width * self.zoom * self.zoom
+                            + yy * self.width * self.zoom
+                            + x * self.zoom;
+                        for xx in 0..self.zoom {
+                            self.buffer[offset + xx] = color;
+                        }
+                    }
                 }
             }
         }
+        self.window
+            .update_with_buffer(
+                &self.buffer,
+                self.width * self.zoom,
+                self.height * self.zoom,
+            )
+            .unwrap();
     }
     //-----------------------------
     fn reset(&mut self) {
@@ -75,36 +106,27 @@ impl SSD1306Access for quadAccess {
 }
 
 //---
-#[macroquad::main("SSD1306")]
-async fn main() {
+fn main() {
     let mut loops = 0;
     let bitmap_width = 64;
     let bitmap_height = 64;
+    let access = miniFbAccess::new(SCREEN_WIDTH, SCREEN_HEIGHT, ZOOM);
 
+    let mut ssd = SSD1306::new(
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+        Box::new(access),
+        &OpenSans_Bold9pt7b,
+        &OpenSans_Bold9pt7b,
+        &OpenSans_Bold9pt7b,
+    );
+    //while access.running() {
+    ssd.begin();
+
+    ssd.fill_screen(false);
+
+    ssd.update();
     loop {
-        loops += 1;
-        if loops > 150 {
-            break;
-        }
-        clear_background(macroquad::color::BLACK);
-
-        let access = quadAccess::new();
-
-        let mut ssd = SSD1306::new(
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
-            Box::new(access),
-            &OpenSans_Bold9pt7b,
-            &OpenSans_Bold9pt7b,
-            &OpenSans_Bold9pt7b,
-        );
-
-        ssd.begin();
-
-        ssd.fill_screen(false);
-
-        ssd.update();
-
         // ssd.print(36,26,"Hey!",true);
 
         //next_frame().await;
@@ -152,8 +174,6 @@ async fn main() {
             true,
         );
         ssd.update();
-
-        next_frame().await;
     }
     std::println!("Exiting....");
 }
