@@ -108,6 +108,16 @@ impl SSD1306 {
         instance.check_font();
         instance
     }
+    //
+    pub fn access(&self) -> &dyn SSD1306Access {
+        // Dereferencing the Box happens automatically via "Deref Coercion"
+        &*self.access
+    }
+
+    /// Returns a mutable reference to the access layer
+    pub fn access_mut(&mut self) -> &mut dyn SSD1306Access {
+        &mut *self.access
+    }
     //-------------------------------------------------------------------------------
     pub fn redraw_all(&mut self) {
         self.dirty = [true; 8];
