@@ -86,7 +86,9 @@ impl SSD1306 {
                 return;
             }
         }
-        self.draw_filled_rectangle(x, y, (w - 1) as usize, (h - 1) as usize, color);
+        if h > 1 {
+            self.draw_filled_rectangle(x, y, (w - 1) as usize, (h - 1) as usize, color);
+        }
     }
 
     //---------------------------------------
