@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 use simpler_gfx::{FontInfo, PFXfont};
 //
 use crate::access::SSD1306Access;
+use crate::ssd1306_cmd::*;
 use crate::ssd1306_init_seq1::SSD1306_INIT_SEQUENCE1;
 
 mod ssd1306_gfx;
@@ -133,6 +134,17 @@ impl SSD1306 {
             self.access.send_command(init_sequence[i]);
         }
         self.clear_screen();
+    }
+    pub fn rotate(&mut self, rotated: bool) {
+        self.access.send_command(SSD1306_DISPLAY_OFF);
+        if rotated {
+            self.access.send_command(SSD1306_SET_SEGMENT_REMAP | 1);
+            self.access.send_command(SSD1306_COM_SCAN_DIR_DEC);
+        } else {
+            self.access.send_command(SSD1306_SET_SEGMENT_REMAP | 0);
+            self.access.send_command(SSD1306_COM_SCAN_DIR_INC);
+        }
+        self.access.send_command(SSD1306_DISPLAY_ON);
     }
     // this does not seem to work (?)
     pub fn scan_direction(&mut self, invert: bool) {

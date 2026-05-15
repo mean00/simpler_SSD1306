@@ -4,17 +4,11 @@ use crate::ssd1306_cmd::*;
 use heatshrink_byte as hs;
 
 fn myAbs(a: usize, b: usize) -> usize {
-    if a > b {
-        return a - b;
-    }
-    b - a
+    a.abs_diff(b)
 }
 //--------------
 fn myMin(a: usize, b: usize) -> usize {
-    if a > b {
-        return b;
-    }
-    a
+    a.min(b)
 }
 //--------------
 impl SSD1306 {
@@ -222,9 +216,9 @@ impl SSD1306 {
         let mut y1 = radius;
 
         self.set_pixel(x, y + radius, color);
-        self.set_pixel(x, y - radius, color);
+        self.set_pixel(x, y.wrapping_sub(radius), color);
         self.set_pixel(x + radius, y, color);
-        self.set_pixel(x - radius, y, color);
+        self.set_pixel(x.wrapping_sub(radius), y, color);
 
         while x1 < y1 {
             if f >= 0 {
@@ -236,13 +230,13 @@ impl SSD1306 {
             ddF_x += 2;
             f += ddF_x;
             self.set_pixel(x + x1, y + y1, color);
-            self.set_pixel(x - x1, y + y1, color);
-            self.set_pixel(x + x1, y - y1, color);
-            self.set_pixel(x - x1, y - y1, color);
+            self.set_pixel(x.wrapping_sub(x1), y + y1, color);
+            self.set_pixel(x + x1, y.wrapping_sub(y1), color);
+            self.set_pixel(x.wrapping_sub(x1), y.wrapping_sub(y1), color);
             self.set_pixel(x + y1, y + x1, color);
-            self.set_pixel(x - y1, y + x1, color);
-            self.set_pixel(x + y1, y - x1, color);
-            self.set_pixel(x - y1, y - x1, color);
+            self.set_pixel(x.wrapping_sub(y1), y + x1, color);
+            self.set_pixel(x + y1, y.wrapping_sub(x1), color);
+            self.set_pixel(x.wrapping_sub(y1), y.wrapping_sub(x1), color);
         }
     }
     //----------------------------------------------------------------------------
@@ -293,22 +287,19 @@ impl SSD1306 {
         }
         let screen_buffer_all = &mut self.raw;
 
-        // dirty pages
         let page0 = y / 8;
-        for page in 0..(h / 8)
-        // page
-        {
-            self.dirty[page + page0] = true;
-        }
-
-        // simple blit
-        for page in 0..(h / 8)
-        // page
-        {
-            let screen_buffer = &mut screen_buffer_all[(x + ((y + page * 8) * self.width) / 8)
-                ..((x + ((y + page * 8) * self.width) / 8) + w)];
-            let data_buffer = &data[(page * w)..(page * w + w)];
-            screen_buffer[..].clone_from_slice(data_buffer);
+        let max_pages = self.height / 8;
+        for page in 0..(h / 8) {
+            let p_idx = page + page0;
+            if p_idx < max_pages {
+                self.dirty[p_idx] = true;
+                let screen_idx = x + ((y + page * 8) * self.width) / 8;
+                if screen_idx + w <= screen_buffer_all.len() {
+                    let screen_buffer = &mut screen_buffer_all[screen_idx..(screen_idx + w)];
+                    let data_buffer = &data[(page * w)..(page * w + w)];
+                    screen_buffer.copy_from_slice(data_buffer);
+                }
+            }
         }
     }
     /**

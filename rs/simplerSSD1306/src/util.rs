@@ -3,16 +3,10 @@ use alloc::alloc::Layout;
 //use alloc::alloc::dealloc as dealloc;
 
 pub fn xabs(x: isize) -> isize {
-    if x < 0 {
-        return -x;
-    }
-    x
+    x.abs()
 }
 pub fn xmin(a: isize, b: isize) -> isize {
-    if a < b {
-        return a;
-    }
-    b
+    a.min(b)
 }
 
 //
